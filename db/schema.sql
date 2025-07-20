@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS events (
 
   -- Event status
 
-  status VARCHAR(50) NOT NULL CHECK (status IN ('published','open', 'matching', 'scheduled', 'cancelled', 'closed')) DEFAULT 'draft',
+  status VARCHAR(50) NOT NULL CHECK (status IN ('draft','published','open', 'matching', 'scheduled', 'cancelled', 'closed')) DEFAULT 'draft',
 
   event_summary_data JSONB, -- Summary data of the event in JSON format
 
