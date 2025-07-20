@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AttendeeResponse {
+  id                Int       @id @default(autoincrement())
+  eventId           Int       @map("event_id")
+  name              String    @db.VarChar(100)
+  email             String    @db.VarChar(100)
+  requestedSpeakers Int[]     @map("requested_speakers")
+  createdAt         DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  events            Event     @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  meetings          Meeting[]
+
+  @@index([email], map: "idx_attendees_email")
+  @@index([eventId], map: "idx_attendees_event_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model Event {
+  id                               Int                @id @default(autoincrement())
+  userId                           Int                @map("user_id")
+  title                            String             @db.VarChar(255)
+  description                      String
+  organization                     String             @db.VarChar(100)
+  url                              String?            @db.VarChar(255)
+  location                         String?            @db.VarChar(255)
+  eventStartTime                   DateTime           @map("event_start_time") @db.Timestamp(6)
+  eventEndTime                     DateTime           @map("event_end_time") @db.Timestamp(6)
+  formOpenTime                     DateTime?          @map("form_open_time") @db.Timestamp(6)
+  formCloseTime                    DateTime           @map("form_close_time") @db.Timestamp(6)
+  meetingsStartTime                DateTime           @map("meetings_start_time") @db.Timestamp(6)
+  meetingsEndTime                  DateTime           @map("meetings_end_time") @db.Timestamp(6)
+  numberOfSlotsForMeetings         Int                @map("number_of_slots_for_meetings")
+  meetingsDuration                 Int                @map("meetings_duration")
+  maxNumberOfMeetingsPerPresenters Int?               @map("max_number_of_meetings_per_presenters")
+  maxTotalNumberOfMeetings         Int?               @map("max_total_number_of_meetings")
+  status                           String             @default("draft") @db.VarChar(50)
+  eventSummaryData                 Json?              @map("event_summary_data")
+  automatic                        Boolean?           @default(true)
+  createdAt                        DateTime?          @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt                        DateTime?          @default(now()) @map("updated_at") @db.Timestamp(6)
+  attendeesResponses               AttendeeResponse[]
+  users                            User               @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  meetings                         Meeting[]
+  presenters                       Presenters[]
+
+  @@index([formOpenTime, formCloseTime], map: "idx_events_form_times")
+  @@index([status], map: "idx_events_status")
+  @@index([eventStartTime, eventEndTime], map: "idx_events_times")
+  @@index([userId], map: "idx_events_user_id")
+  @@map("events")
+}
+
+model Meeting {
+  eventId            Int              @map("event_id")
+  presenterId        Int              @map("presenter_id")
+  attendeeId         Int              @map("attendee_id")
+  meetingTime        DateTime         @map("meeting_time") @db.Timestamp(6)
+  meetingDuration    Int              @map("meeting_duration")
+  createdAt          DateTime?        @default(now()) @map("created_at") @db.Timestamp(6)
+  attendeesResponses AttendeeResponse @relation(fields: [attendeeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  events             Event            @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  presenters         Presenters       @relation(fields: [presenterId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([eventId, presenterId, attendeeId])
+  @@index([meetingTime], map: "idx_meetings_times")
+  @@map("meetings")
+}
+
+model Presenters {
+  id           Int       @id @default(autoincrement())
+  userId       Int       @map("user_id")
+  eventId      Int       @map("event_id")
+  name         String    @db.VarChar(100)
+  email        String    @db.VarChar(100)
+  organization String    @db.VarChar(100)
+  description  String
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  meetings     Meeting[]
+  events       Event     @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users        User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([email], map: "idx_presenters_email")
+  @@index([eventId], map: "idx_presenters_event_id")
+  @@map("presenters")
+}
+
+model User {
+  id         Int          @id @default(autoincrement())
+  username   String       @unique @db.VarChar(50)
+  email      String       @unique @db.VarChar(100)
+  name       String       @db.VarChar(100)
+  surnames   String       @db.VarChar(255)
+  password   String       @db.VarChar(255)
+  createdAt  DateTime?    @default(now()) @map("created_at") @db.Timestamp(6)
+  events     Event[]
+  presenters Presenters[]
+
+  @@map("users")
+}
