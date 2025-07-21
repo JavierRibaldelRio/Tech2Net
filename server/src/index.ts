@@ -1,5 +1,8 @@
 import express, { Request, Response } from 'express';
 
+// Routers
+import authRouter from './auth/auth.router';
+
 const app = express();
 const PORT = 3001;
 
@@ -16,10 +19,9 @@ app.use((req, res, next) => {
 });
 
 
-// Ruta de ejemplo
-app.get('/api/data', (req: Request, res: Response) => {
-    res.json({ message: "Hola desde Express + TypeScript!" + "¡Ding dong!: son las " + new Date().toLocaleTimeString() });
-});
+// Routes
+app.use('/api/auth', authRouter);
+
 
 app.listen(PORT, () => {
     console.log(`Servidor backend en http://localhost:${PORT}`);
