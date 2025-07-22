@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 import prisma from '../prisma/client';
 import bycript from 'bcrypt';
 
+import { userRegistrationSchema } from '../schemas/user.schema';
+
 //Dotenv configuration
 import dotenv from 'dotenv';
 dotenv.config();
@@ -19,8 +21,9 @@ if (!JWT_SECRET) {
 //Creates user and returns its token //TODO: handle database erros 
 export const registerUser = async (req: Request, res: Response) => {
 
-    // TODO: check format, and if missing output using zod
-    const { username, email, name, surnames, password } = req.body;
+
+    const { username, email, name, surnames, password } = userRegistrationSchema.parse(req.body);
+
 
 
 
