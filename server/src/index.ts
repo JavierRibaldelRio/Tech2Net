@@ -3,6 +3,9 @@ import express, { Request, Response } from 'express';
 // Routers
 import authRouter from './auth/auth.router';
 
+// Error
+import { errorHandler } from './middleware/error.middleware';
+
 const app = express();
 const PORT = 3001;
 
@@ -21,6 +24,9 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api/auth', authRouter);
+
+// Error Handler
+app.use(errorHandler);
 
 
 app.listen(PORT, () => {
