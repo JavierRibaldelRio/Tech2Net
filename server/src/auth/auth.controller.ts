@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import bycript from 'bcrypt';
+import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
 
 import prisma from '../prisma/client';
@@ -19,7 +19,7 @@ if (!JWT_SECRET) {
     throw new Error('JWT_SECRET is not defined in the environment variables');
 }
 
-//Creates user and returns its token //TODO: handle database erros 
+//Creates user and returns its token 
 export const registerUser = async (req: Request, res: Response) => {
 
 
@@ -35,7 +35,7 @@ export const registerUser = async (req: Request, res: Response) => {
     }
 
     // Hash the password
-    const hashedPassword = await bycript.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create the user & return it except password
     const newUser = await prisma.user.create({
@@ -82,7 +82,7 @@ export const loginUser = async (req: Request, res: Response) => {
     });
 
     // If is not register or the password not mat
-    if (!user || !(await bycript.compare(password, user.password))) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
 
         throw createHttpError(400, 'Invalid credentials');
     }
