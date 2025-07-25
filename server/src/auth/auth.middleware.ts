@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import createHttpError from 'http-errors';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -21,15 +22,17 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
     // Removes "Bearer " prefix from the token 
     const token = req.headers['authorization']?.split(' ')[1];
 
-    if (!token) return res.status(401).json({ error: 'Access Denied' });
+    // Checks if there is token
+    if (!token) {
 
+        throw createHttpError(401, 'Access Denied: token missing')
+    }
     try {
         const decoded = jwt.verify(token, JWT_SECRET!) as { userId: number };
         req.userId = decoded.userId;
 
         next();
     } catch (error) {
-        console.error("Error: " + error);
-        res.status(401).json({ error: 'Invalid Token' });
+        throw createHttpError(401, 'Invalid Token')
     }
 };

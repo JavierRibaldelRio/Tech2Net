@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import prisma from '../prisma/client';
 import bycript from 'bcrypt';
+import createHttpError from 'http-errors';
 
+import prisma from '../prisma/client';
 import { userRegistrationSchema } from '../schemas/user.schema';
 
 //Dotenv configuration
@@ -24,17 +25,13 @@ export const registerUser = async (req: Request, res: Response) => {
 
     const { username, email, name, surnames, password } = userRegistrationSchema.parse(req.body);
 
-
-
-
-
-    // Check if user already exists //TODO: look also for name
+    // Check if user already exists 
     const existingUser = await prisma.user.findUnique({
         where: { email }
     });
 
     if (existingUser) {
-        return res.status(400).json({ error: 'User already exists' });
+        throw createHttpError(409, 'User already exists')
     }
 
     // Hash the password
@@ -71,9 +68,6 @@ export const registerUser = async (req: Request, res: Response) => {
         token,
         user: newUser
     });
-
-
-
 }
 
 
@@ -89,7 +83,8 @@ export const loginUser = async (req: Request, res: Response) => {
 
     // If is not register or the password not mat
     if (!user || !(await bycript.compare(password, user.password))) {
-        return res.status(400).json({ message: 'Invalid credentials' });
+
+        throw createHttpError(400, 'Invalid credentials');
     }
 
     // Define el payload
