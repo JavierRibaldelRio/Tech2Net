@@ -4,20 +4,23 @@ import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
 
 import prisma from '../prisma/client';
+import { User } from '@prisma/client';
 import { userRegistrationSchema } from '../schemas/user.schema';
 
-//Dotenv configuration
-import dotenv from 'dotenv';
-dotenv.config();
-
-// Get the JWT secret from environment variables
-const JWT_SECRET = process.env.JWT_SECRET;
-
-
+import { JWT_SECRET } from '../config';
 
 if (!JWT_SECRET) {
     throw new Error('JWT_SECRET is not defined in the environment variables');
 }
+
+// Defines the paylod as so the time for expiration
+const generateToken = (user: User): string => {
+
+    //! USER INCLUDES PASSWORD, do not pass user object
+    return jwt.sign({ userId: user.id }, JWT_SECRET, {
+        expiresIn: '24h',
+    });
+};
 
 //Creates user and returns its token 
 export const registerUser = async (req: Request, res: Response) => {
@@ -46,27 +49,16 @@ export const registerUser = async (req: Request, res: Response) => {
             surnames,
             password: hashedPassword,
             createdAt: new Date(),
-        },
-        select: {
-            id: true,
-            email: true,
-            username: true,
-            name: true,
-            surnames: true,
-            createdAt: true
         }
     });
 
     // Generate JWT token
-    const token = jwt.sign({ userId: newUser.id }, JWT_SECRET, {
-        expiresIn: '24h'
-    });
+    const token = generateToken(newUser);
 
 
     res.status(201).json({
         message: 'User registered sucessfully',
-        token,
-        user: newUser
+        token
     });
 }
 
@@ -88,11 +80,10 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 
     // Define el payload
-    const token = jwt.sign({ userId: user.id, }, JWT_SECRET, {
-        expiresIn: '24h'
+    const token = generateToken(user);
+    return res.status(202).json({
+        token, message: 'Log in was sucessfull'
     });
-
-    return res.status(202).json({ token, user: { id: user.id, email: user.email } });
 };
 
 

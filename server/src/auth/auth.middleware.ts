@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import createHttpError from 'http-errors';
-import dotenv from 'dotenv';
-dotenv.config();
+
+import { JWT_SECRET } from '../config';
 
 // Extend the Request interface to include userId
 declare module 'express-serve-static-core' {
@@ -11,11 +11,7 @@ declare module 'express-serve-static-core' {
     }
 }
 
-// Get the JWT secret from environment variables
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) {
-    throw new Error('JWT_SECRET is not defined in the environment variables');
-}
+
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
 
