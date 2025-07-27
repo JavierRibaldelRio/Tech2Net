@@ -15,13 +15,12 @@ declare module 'express-serve-static-core' {
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
 
-    // Removes "Bearer " prefix from the token 
-    const token = req.headers['authorization']?.split(' ')[1];
+    const token = req.cookies.authToken;
 
     // Checks if there is token
     if (!token) {
 
-        throw createHttpError(401, 'Access Denied: token missing')
+        throw createHttpError(401, 'Access Denied: cookie missing')
     }
     try {
         const decoded = jwt.verify(token, JWT_SECRET!) as { userId: number };

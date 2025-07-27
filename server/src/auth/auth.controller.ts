@@ -2,25 +2,43 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
+import ms from 'ms'
 
 import prisma from '../prisma/client';
 import { User } from '@prisma/client';
 import { userRegistrationSchema } from '../schemas/user.schema';
 
-import { JWT_SECRET } from '../config';
+import { COOKIE_DOMAIN, JWT_SECRET, JWT_TOKEN_TIME, NODE_ENV } from '../config';
 
 if (!JWT_SECRET) {
     throw new Error('JWT_SECRET is not defined in the environment variables');
 }
+
+const EXPIRE: number = ms(JWT_TOKEN_TIME) || ms("24h");
 
 // Defines the paylod as so the time for expiration
 const generateToken = (user: User): string => {
 
     //! USER INCLUDES PASSWORD, do not pass user object
     return jwt.sign({ userId: user.id }, JWT_SECRET, {
-        expiresIn: '24h',
+        expiresIn: EXPIRE
     });
 };
+
+const setAuthCookie = (res: Response, token: string): void => {
+
+    res.cookie('authToken', token, {
+
+        httpOnly: true,
+        secure: NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: EXPIRE,
+        domain: COOKIE_DOMAIN,
+
+        path: '/'
+        //path: '/api/user/'
+    });
+}
 
 //Creates user and returns its token 
 export const registerUser = async (req: Request, res: Response) => {
@@ -55,10 +73,10 @@ export const registerUser = async (req: Request, res: Response) => {
     // Generate JWT token
     const token = generateToken(newUser);
 
+    setAuthCookie(res, token);
 
     res.status(201).json({
         message: 'User registered sucessfully',
-        token
     });
 }
 
@@ -79,10 +97,14 @@ export const loginUser = async (req: Request, res: Response) => {
         throw createHttpError(400, 'Invalid credentials');
     }
 
-    // Define el payload
     const token = generateToken(user);
+
+    // Generation of the cookie
+    setAuthCookie(res, token);
+
+
     return res.status(202).json({
-        token, message: 'Log in was sucessfull'
+        message: 'Log in was sucessfull'
     });
 };
 

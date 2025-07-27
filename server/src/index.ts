@@ -1,4 +1,8 @@
 import express, { Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+
+import { FRONTEND_URL } from './config';
 
 // Routers
 import authRouter from './auth/auth.router';
@@ -6,24 +10,30 @@ import authRouter from './auth/auth.router';
 // Error
 import { errorHandler } from './middleware/error.middleware';
 
-const app = express();
 const PORT = 3001;
 
+
+const app = express();
 app.use(express.json());
 
+app.use(cookieParser());
 
-// ! TEMPORARY: INSTALLING CORS IS MISSING
-// Middleware para habilitar CORS manualmente
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // Permite solo tu frontend
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); // Métodos permitidos
-    res.header('Access-Control-Allow-Headers', 'Content-Type'); // Cabeceras permitidas
-    next();
-});
+
+app.use(cors({
+    origin: FRONTEND_URL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true
+}));
 
 
 // Routes
 app.use('/api/auth', authRouter);
+
+//TODO
+// app.use('/api/user') routes related that requires token
+
+app.use('/', (req: Request, res: Response) => { res.send("Hola") });
 
 // Error Handler
 app.use(errorHandler);
