@@ -3,7 +3,7 @@
 import { FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { apiFetch } from '@/lib/api-express'
+import { apiRoute } from '@/lib/api-express'
 
 import { GalleryVerticalEnd } from 'lucide-react'
 import { LoginForm } from '@/components/login-form'
@@ -12,30 +12,41 @@ export default function LoginPage() {
     const router = useRouter()
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault()
 
         console.log("lino")
 
         const formData = new FormData(event.currentTarget);
-        console.log('fo :>> ', formData);
+        // Get data
         const email = formData.get('email') as string;
-        console.log('email :>> ', email);
         const password = formData.get('password') as string;
 
 
-        //! apiFetch handles errors TODO
-        const response = await apiFetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-        })
+        try {
+            const response = await fetch(apiRoute('/api/auth/login'), {
 
-        const { token } = response;
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
 
-        // stores 
-        localStorage.setItem('authToken', token);
+            if (!response.ok) {
+                throw new Error("Error on login");
+            }
 
-        router.push('/profile')
+
+            const { token } = await response.json();
+
+            // stores 
+            localStorage.setItem('authToken', token);
+
+
+
+        }
+        catch (e) {
+
+            console.error(e);
+        }
     }
 
     return (
