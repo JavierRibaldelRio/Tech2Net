@@ -28,7 +28,7 @@ export default function UserPage() {
 
             } catch (error) {
                 console.error('Error:', error);
-                router.push('/login');
+                router.push('/auth/login');
             }
         };
 
