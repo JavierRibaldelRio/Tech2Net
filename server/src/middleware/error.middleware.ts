@@ -17,7 +17,7 @@ export const errorHandler = (err: ErrorRequestHandler, req: Request, res: Respon
     if (err instanceof ZodError) {
         return res.status(400).json({
             error: 'Validation Error',
-            details: prettifyError(err),
+            message: prettifyError(err),
         });
     }
     // --- Handle Prisma Errors (Database Layer) ---
