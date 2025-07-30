@@ -13,7 +13,6 @@ export default function LoginPage() {
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 
-        console.log("lino")
 
         const formData = new FormData(event.currentTarget);
         // Get data
@@ -34,14 +33,9 @@ export default function LoginPage() {
                 throw new Error("Error on login");
             }
 
-
-            const { token } = await response.json();
-
-            // stores 
-            localStorage.setItem('authToken', token);
-
-
-
+            // const { token } = await response.json();
+            // // stores 
+            // localStorage.setItem('authToken', token);
         }
         catch (e) {
 
