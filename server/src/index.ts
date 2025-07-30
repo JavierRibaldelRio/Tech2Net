@@ -6,6 +6,7 @@ import { FRONTEND_URL } from './config';
 
 // Routers
 import authRouter from './auth/auth.router';
+import userRouter from './routes/user.router';
 
 // Error
 import { errorHandler } from './middleware/error.middleware';
@@ -28,12 +29,10 @@ app.use(cors({
 
 
 // Routes
-app.use('/api/auth', authRouter);
+app.use('/api/auth', authRouter);               // Auth
+app.use('/api/user', userRouter);               // User settings and data
 
-//TODO
-// app.use('/api/user') routes related that requires token
-
-app.use('/', (req: Request, res: Response) => { res.send("Hola") });
+app.use('/', (req: Request, res: Response) => { res.send("Ding dong: " + (new Date()).toString()) });
 
 // Error Handler
 app.use(errorHandler);
