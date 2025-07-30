@@ -16,6 +16,10 @@ if (!JWT_SECRET) {
 
 const EXPIRE: number = ms(JWT_TOKEN_TIME) || ms("24h");
 
+
+// The routes where de cookie might be send
+const COOKIE_PATH = "/";
+
 // Defines the paylod as so the time for expiration
 const generateToken = (user: User): string => {
 
@@ -35,7 +39,7 @@ const setAuthCookie = (res: Response, token: string): void => {
         maxAge: EXPIRE,
         domain: COOKIE_DOMAIN,
 
-        path: '/'
+        path: COOKIE_PATH
         //path: '/api/user/'
     });
 }
@@ -109,3 +113,15 @@ export const loginUser = async (req: Request, res: Response) => {
 };
 
 
+
+
+export const logoutUser = async (req: Request, res: Response) => {
+    res.clearCookie('authToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        path: COOKIE_PATH,
+        sameSite: 'strict'
+    });
+
+    res.status(200).json({ message: 'Log out succesful' });
+};
