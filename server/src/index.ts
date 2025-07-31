@@ -10,6 +10,7 @@ import userRouter from './routes/user.router';
 
 // Error
 import { errorHandler } from './middleware/error.middleware';
+import eventRouter from './routes/events.router';
 
 const PORT = 3001;
 
@@ -31,6 +32,7 @@ app.use(cors({
 // Routes
 app.use('/api/auth', authRouter);               // Auth
 app.use('/api/user', userRouter);               // User settings and data
+app.use('/api/events', eventRouter);            // Events
 
 app.use('/', (req: Request, res: Response) => { res.send("Ding dong: " + (new Date()).toString()) });
 
