@@ -2,7 +2,7 @@
 import React, { FormEvent, useState, ReactElement } from 'react'
 import { GalleryVerticalEnd } from "lucide-react"
 
-import { SignUpForm } from "@/components/sign-up-form"
+import { SignUpForm } from "@/components/forms/sign-up-form"
 import { apiRoute } from '@/lib/api-express';
 import AlertState from '@/types/alert.type';
 
