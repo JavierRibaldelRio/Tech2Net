@@ -19,6 +19,7 @@ model AttendeeResponse {
 
   @@index([email], map: "idx_attendees_email")
   @@index([eventId], map: "idx_attendees_event_id")
+  @@map("attendees_responses")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
