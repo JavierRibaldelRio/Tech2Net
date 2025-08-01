@@ -1,0 +1,19 @@
+{
+  "name": "common-net4tech",
+  "version": "1.0.0",
+  "description": "common files",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "zod": "^4.0.14"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}

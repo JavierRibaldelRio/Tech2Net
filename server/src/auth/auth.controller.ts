@@ -6,7 +6,8 @@ import ms from 'ms'
 
 import prisma from '../prisma/client';
 import { User } from '@prisma/client';
-import { userRegistrationSchema } from '../schemas/user.schema';
+
+import { userRegistrationSchema } from '../../../common/schemas/user.schema';
 
 import { COOKIE_DOMAIN, JWT_SECRET, JWT_TOKEN_TIME, NODE_ENV } from '../config';
 
