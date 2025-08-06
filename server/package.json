@@ -12,10 +12,10 @@
   },
   "license": "ISC",
   "author": "Javier Ribal del Río",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.ts",
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon",
     "build": "tsc",
     "start": "node dist/index.js",
     "prisma-studio": " npx prisma studio",
@@ -41,6 +41,7 @@
     "nodemon": "^3.1.10",
     "prisma": "^6.13.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.2"
   }
 }

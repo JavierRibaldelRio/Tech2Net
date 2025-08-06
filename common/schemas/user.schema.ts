@@ -38,9 +38,4 @@ const userRegistrationSchema = z.object({
 
 });
 
-
-export function rene() {
-    console.log("objecddts");
-}
-
 export { userRegistrationSchema };
