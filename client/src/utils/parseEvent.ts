@@ -22,6 +22,7 @@ export const parseEvent = (data: EventFormData, status: Status): EventData => {
     } = data;
 
 
+    const mET = combineDateAndTime(day, meetingsStartTime);
     return {
         ...rest,
         eventStartTime: combineDateAndTime(day, eventStartTime),
@@ -30,10 +31,10 @@ export const parseEvent = (data: EventFormData, status: Status): EventData => {
         formOpenTime: formOpenTime ? combineDateAndTime(day, formOpenTime) : undefined,
 
 
+        // In case of automatic substracts 10 min to meetingsStartTime
+        formCloseTime: formCloseTime ? combineDateAndTime(day, formCloseTime) : new Date(mET.getTime() - 10 * 60 * 1000),
 
-        formCloseTime: formCloseTime ? combineDateAndTime(day, formCloseTime) : undefined,
-
-        meetingsStartTime: combineDateAndTime(day, meetingsStartTime),
+        meetingsStartTime: mET,
         meetingsEndTime: combineDateAndTime(day, meetingsEndTime),
 
         status: status

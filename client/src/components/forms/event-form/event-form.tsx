@@ -63,8 +63,8 @@ export function EventForm({
             meetingsEndTime: "",
 
             numberOfSlotsForMeetings: 1,
-            meetingDuration: 15,
-            maxNumberOfMeetingsPerPresenter: 0,
+            meetingsDuration: 15,
+            maxNumberOfMeetingsPerPresenters: 0,
             maxTotalNumberOfMeetings: 0,
 
             automatic: true
@@ -133,14 +133,14 @@ export function EventForm({
 
                     <NumberField
                         form={form}
-                        name="meetingDuration"
+                        name="meetingsDuration"
                         label="Duración de las reuniones (minutos)"
                         description="Duración de cada reunión en minutos"
                     />
 
                     <NumberField
                         form={form}
-                        name="maxNumberOfMeetingsPerPresenter"
+                        name="maxNumberOfMeetingsPerPresenters"
                         label="Máximo de reuniones por presentador"
                         description="Número máximo de reuniones que un presentador puede tener, si es 0 no hay límite"
                     />

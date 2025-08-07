@@ -19,9 +19,9 @@ const EventBasic = z.object({
     url: z.url().max(255).optional().or(z.literal('')),
     location: z.string().max(255).optional(),
     numberOfSlotsForMeetings: z.number(),
-    meetingDuration: z.number(),
+    meetingsDuration: z.number(),
 
-    maxNumberOfMeetingsPerPresenter: z.number(),
+    maxNumberOfMeetingsPerPresenters: z.number(),
     maxTotalNumberOfMeetings: z.number(),
 
     automatic: z.boolean()
@@ -132,20 +132,34 @@ export const EventFormSchema = EventBasic.extend({
         }
     });
 
+
+function zParseDate() {
+
+    console.log("Rene")
+    return z.preprocess(
+        (val) =>
+            typeof val === "string" || typeof val === "number"
+                ? new Date(val)
+                : val,
+        z.date()
+    );
+}
 export type EventFormData = z.infer<typeof EventFormSchema>;
 
 
 // Used on back to check if the input is correct, and also in front to parse values before sending to front
 export const EventBackendSchema = EventBasic.extend({
 
-    eventStartTime: z.date(),
-    eventEndTime: z.date(),
+    eventStartTime: zParseDate(),
 
-    formOpenTime: z.date().optional(),
-    formCloseTime: z.date().optional(),
 
-    meetingsStartTime: z.date(),
-    meetingsEndTime: z.date(),
+    eventEndTime: zParseDate(),
+
+    formOpenTime: zParseDate().optional(),
+    formCloseTime: zParseDate(),
+
+    meetingsStartTime: zParseDate(),
+    meetingsEndTime: zParseDate(),
 
     status: StatusEnum,
 
