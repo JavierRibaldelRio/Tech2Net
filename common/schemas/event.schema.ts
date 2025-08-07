@@ -135,7 +135,6 @@ export const EventFormSchema = EventBasic.extend({
 
 function zParseDate() {
 
-    console.log("Rene")
     return z.preprocess(
         (val) =>
             typeof val === "string" || typeof val === "number"
