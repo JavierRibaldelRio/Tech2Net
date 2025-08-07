@@ -5,6 +5,8 @@ import prisma from "../prisma/client";
 import { Prisma } from "@prisma/client";
 
 import { EventBackendSchema } from '../../../common/schemas/event.schema';
+import Presenter from "../../../common/types/Presenter.type";
+
 import parseParamAsInt from "../utils/parseParamAsInt";
 
 
@@ -84,7 +86,7 @@ export const getUsers = async (req: Request, res: Response) => {
     }
 
 
-    const results = await prisma.presenters.findMany({
+    const results: Presenter[] = await prisma.presenters.findMany({
         where: {
             userId: userId,
             eventId: eventId
