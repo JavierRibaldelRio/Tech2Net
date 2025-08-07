@@ -1,21 +1,16 @@
 import * as z from "zod";
 
 import parseTimeToMinutes from "../utils/parseTime";
-
+import { STATUS } from "../constants/status";
 
 const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
-const StatusEnum = z.enum([
-    "draft",
-    "published",
-    "open",
-    "matching",
-    "scheduled",
-    "cancelled",
-    "closed",
-]);
 
-console.log('object :>> ');
+// Status
+const StatusEnum = z.enum(Object.values(STATUS));
+export type Status = z.infer<typeof StatusEnum>;
+
+// Events
 const EventBasic = z.object({
 
     title: z.string().min(2).max(255),
@@ -33,6 +28,8 @@ const EventBasic = z.object({
 
 });
 
+
+// Used on frontend to validate the form submition
 export const EventFormSchema = EventBasic.extend({
 
     day: z.date(),
@@ -65,7 +62,8 @@ export const EventFormSchema = EventBasic.extend({
                 });
             }
         }
-    }).superRefine((data, ctx) => {
+    })
+    .superRefine((data, ctx) => {
         const start = parseTimeToMinutes(data.eventStartTime);
         const end = parseTimeToMinutes(data.eventEndTime);
         const open = parseTimeToMinutes(data.formOpenTime ?? "");
@@ -133,3 +131,87 @@ export const EventFormSchema = EventBasic.extend({
             });
         }
     });
+
+export type EventFormData = z.infer<typeof EventFormSchema>;
+
+
+// Used on back to check if the input is correct, and also in front to parse values before sending to front
+export const EventBackendSchema = EventBasic.extend({
+
+    eventStartTime: z.date(),
+    eventEndTime: z.date(),
+
+    formOpenTime: z.date().optional(),
+    formCloseTime: z.date().optional(),
+
+    meetingsStartTime: z.date(),
+    meetingsEndTime: z.date(),
+
+    status: StatusEnum,
+
+}).superRefine((data, ctx) => {
+    const start = data.eventStartTime?.getTime() ?? null;
+    const end = data.eventEndTime?.getTime() ?? null;
+    const open = data.formOpenTime?.getTime() ?? null;
+    const close = data.formCloseTime?.getTime() ?? null;
+    const meetingsStart = data.meetingsStartTime?.getTime() ?? null;
+    const meetingsEnd = data.meetingsEndTime?.getTime() ?? null;
+
+    if (data.automatic) {
+        // 1. formOpenTime must be before formCloseTime
+        if (open !== null && close !== null && open >= close) {
+            ctx.addIssue({
+                path: ["formOpenTime"],
+                message: "Form opening time must be before closing time",
+                code: "custom",
+            });
+        }
+
+        // 2. formCloseTime must be after eventStartTime
+        if (start !== null && close !== null && start >= close) {
+            ctx.addIssue({
+                path: ["formCloseTime"],
+                message: "Form closing time must be after event start time",
+                code: "custom",
+            });
+        }
+
+        // 3. At least 10 minutes between formCloseTime and meetingsStartTime
+        if (close !== null && meetingsStart !== null && close + 10 * 60 * 1000 > meetingsStart) {
+            ctx.addIssue({
+                path: ["meetingsStartTime"],
+                message: "There must be at least 10 minutes between form closing and meeting start time",
+                code: "custom",
+            });
+        }
+    }
+
+    // 4. eventStartTime must be before meetingsStartTime
+    if (start !== null && meetingsStart !== null && start >= meetingsStart) {
+        ctx.addIssue({
+            path: ["meetingsStartTime"],
+            message: "Meeting start time must be after event start time",
+            code: "custom",
+        });
+    }
+
+    // 5. meetingsStartTime must be before meetingsEndTime
+    if (meetingsStart !== null && meetingsEnd !== null && meetingsStart >= meetingsEnd) {
+        ctx.addIssue({
+            path: ["meetingsEndTime"],
+            message: "Meeting end time must be after start time",
+            code: "custom",
+        });
+    }
+
+    // 6. meetingsEndTime must not exceed eventEndTime
+    if (meetingsEnd !== null && end !== null && meetingsEnd > end) {
+        ctx.addIssue({
+            path: ["meetingsEndTime"],
+            message: "Meeting end time must not exceed event end time",
+            code: "custom",
+        });
+    }
+});
+
+export type EventData = z.infer<typeof EventBackendSchema>;

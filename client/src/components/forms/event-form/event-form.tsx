@@ -1,7 +1,7 @@
 'use client'
 
-import React, { ReactNode } from "react";
-import { useForm, FieldPath, FieldValues, UseFormReturn } from "react-hook-form";
+import React from "react";
+import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,6 @@ import {
     FormField,
     FormItem,
     FormLabel,
-    FormMessage,
 } from "@/components/ui/form";
 
 import { Switch } from "@/components/ui/switch";
@@ -21,17 +20,29 @@ import { DateInput } from "./date-input";
 
 import { CustomFormField } from "./customFormInput";
 
-import { EventFormSchema } from ':neth4tech/schemas/event.schema'
+import { EventFormSchema, EventFormData } from ':neth4tech/schemas/event.schema'
 import { NumberField } from "./numberField";
-// 1. Define tu esquema de validación con Zod
+
+
+
+
+interface EventFormProps extends React.ComponentProps<"div"> {
+
+    handleSubmit: (data: EventFormData) => void;
+
+}
+
 
 export function EventForm({
 
     className,
+    handleSubmit,
     ...props
-}: React.ComponentProps<"div">) {
+}: EventFormProps) {
 
-    const form = useForm<z.infer<typeof EventFormSchema>>({
+
+    //! In the future will need to be on another file
+    const form = useForm<EventFormData>({
         resolver: zodResolver(EventFormSchema),
         // Needed, if removed error of uncontrolled form
         defaultValues: {
@@ -61,15 +72,19 @@ export function EventForm({
     });
 
 
+
+
     function onSubmit(values: z.infer<typeof EventFormSchema>) {
 
         console.log(values);
+
+        handleSubmit(values);
         // Aquí puedes manejar el envío de datos
     }
 
     const isAutomatic = form.watch("automatic");
     return (
-        <div>
+        <div {...props}>
             <Form {...form} >
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 
