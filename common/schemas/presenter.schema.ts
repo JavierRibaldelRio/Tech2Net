@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-const presenterBasicSchema = z.object({
+const PresenterBasicSchema = z.object({
 
     name: z.string().max(100),
     email: z.email().max(100),
@@ -9,4 +9,5 @@ const presenterBasicSchema = z.object({
 
 });
 
-export { presenterBasicSchema }
+export { PresenterBasicSchema }
+export type PresenterBasicData = z.infer<typeof PresenterBasicSchema>;
