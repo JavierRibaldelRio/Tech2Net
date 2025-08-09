@@ -1,7 +1,7 @@
 'use client'
 
 import { EventForm } from "@/components/forms/event-form/event-form"
-import { EventFormSchema, EventFormData, } from ':neth4tech/schemas/event.schema'
+import { EventFormData, } from ':neth4tech/schemas/event.schema'
 import { STATUS } from ":neth4tech/constants/status"
 import { parseEvent } from "@/utils/parseEvent"
 import { apiRoute } from "@/lib/api-express"
