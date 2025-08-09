@@ -20,9 +20,10 @@ interface RowPresentersProps extends React.ComponentProps<"tr"> {
 
     handleAdd?: () => any;
     handleEdit?: () => any;
-    handleRemove?: () => any;
+    handleRemove: (id: number) => void;
+    handleRestore: (id: number) => void;
     i: number,
-    presenters: Presenter;
+    presenter: Presenter;
 
 }
 
@@ -31,8 +32,9 @@ function RowPresenters({
     handleAdd,
     handleEdit,
     handleRemove,
+    handleRestore,
     i,
-    presenters,
+    presenter,
     ...props
 
 }: RowPresentersProps) {
@@ -40,10 +42,12 @@ function RowPresenters({
     const [removed, setRemoved] = useState<boolean>(false);
 
     const remove = () => {
+        handleRemove(presenter.id || 0)
         setRemoved(true);
     };
 
     const restore = () => {
+        handleRestore(presenter.id || 0)
         setRemoved(false);
     };
 
@@ -59,25 +63,34 @@ function RowPresenters({
     const buttonRestore = <Button size="sm" className="text-[11.5px]" onClick={restore}>Restaurar <Undo2Icon /></Button>
 
 
+    let bgColor = " ";
+
+    if (removed) {
+        bgColor = " bg-red-100 hover:bg-red-200"
+    }
+    else if (presenter.id < 0) {
+
+        bgColor = " bg-green-100 hover:bg-green-200"
+    }
+
+
     const lineThrough = removed ? " line-through" : ""
     return (
-        <TableRow className={'h-[9vh]  border-primary ' + (removed && " bg-red-100 hover:bg-red-200")} >
+        <TableRow className={'h-[9vh]  border-primary ' + bgColor} >
             <TableCell className={'' + lineThrough}>{i}</TableCell>
-            <TableCell className={'whitespace-normal break-words hyphens-auto' + lineThrough}>{presenters.name}</TableCell>
-            <TableCell className={'truncate' + lineThrough} title={presenters.email}>{presenters.email}</TableCell>
-            <TableCell className={'whitespace-normal break-words hyphens-auto' + lineThrough}>{presenters.organization}</TableCell>
+            <TableCell className={'whitespace-normal break-words hyphens-auto' + lineThrough}>{presenter.name}</TableCell>
+            <TableCell className={'truncate' + lineThrough} title={presenter.email}>{presenter.email}</TableCell>
+            <TableCell className={'whitespace-normal break-words hyphens-auto' + lineThrough}>{presenter.organization}</TableCell>
             <TableCell className='text-[10px] h-full'>
 
                 <TextareaSizable
-                    className={"text-[10px] [text-align:justify] " + (removed && " border-red-300")} value={presenters.description}
+                    className={"text-[10px] [text-align:justify] " + (removed && " border-red-300")} value={presenter.description}
                     readOnly />
 
             </TableCell>
             <TableCell>
                 <div className="flex justify-around w-full">
-
                     {removed ? buttonRestore : buttonsNormal}
-
                 </div>
             </TableCell>
         </TableRow >

@@ -19,10 +19,10 @@ interface TablePresentersProps extends React.ComponentProps<"table"> {
 
     handleAdd: (data: PresenterBasicData) => void;
     handleEdit?: () => any;
-    handleRemove?: () => any;
+    handleRemove: (id: number) => void;
+    handleRestore: (id: number) => void;
 
     presenters: Presenter[];
-
 }
 
 export function TablePresenters({
@@ -30,13 +30,20 @@ export function TablePresenters({
     handleAdd,
     handleEdit,
     handleRemove,
+    handleRestore,
     presenters,
     ...props
 
 }: TablePresentersProps) {
 
     // Content of the table
-    const tableContent = presenters.map((p, i) => <RowPresenters presenters={p} i={i + 1} key={p.email} />)
+    const tableContent = presenters.map((p, i) => <RowPresenters
+        presenter={p}
+        i={i + 1}
+        key={p.id}
+        handleRemove={handleRemove}
+        handleRestore={handleRestore}
+    />);
 
     return (
         <Table className={className}>

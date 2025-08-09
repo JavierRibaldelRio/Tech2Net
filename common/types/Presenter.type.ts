@@ -1,6 +1,6 @@
 export default interface Presenter {
 
-    id?: number,
+    id: number,
     name: string,
     email: string,
     organization: string,

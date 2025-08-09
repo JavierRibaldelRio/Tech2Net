@@ -55,6 +55,7 @@ export function FormPresenter({
         //Needed
 
         defaultValues: {
+            id: 0,
             name: "",
             email: "",
             organization: "",
@@ -79,6 +80,10 @@ export function FormPresenter({
 
                         onSubmit={form.handleSubmit(onSubmit)}
                     >
+
+                        {/* Hidden input */}
+
+                        <input type="number" name="id" value={0} readOnly hidden />
 
 
 

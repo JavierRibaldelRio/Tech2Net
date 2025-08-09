@@ -16,10 +16,14 @@ interface ModifyPresentersAreaProps extends React.ComponentProps<"div"> {
 
 interface Modifications {
 
-    newPresenters: Presenter[];
     removedPresenters: number[];
     editedPresenters: Presenter[];
 }
+
+let tempCounter = -1;
+
+// Generates a Temp id for new participants, are negative to avoid coinciding with truthfull Id's
+const genTempId = (): number => tempCounter--;
 
 export function ModifyPresentersArea({
     className,
@@ -28,21 +32,52 @@ export function ModifyPresentersArea({
     ...props
 }: ModifyPresentersAreaProps) {
 
-    // pPresenter will never change
-    const [presenters, setPresenters] = useState<Presenter[]>(pPresenters);
-
-    const [modifications, setModifications] = useState<Modifications>({ newPresenters: [], removedPresenters: [], editedPresenters: [] });
+    const [newPresenters, setNewPresenters] = useState<Record<number, Presenter>>({});
+    const [modifications, setModifications] = useState<Modifications>({ removedPresenters: [], editedPresenters: [] });
 
 
     // Modifications functions
 
     const handleAdd = (data: PresenterBasicData) => {
 
+        const id = genTempId();
+        data.id = id;
+
+        setNewPresenters(prev => ({ ...prev, [id]: data }));
+    }
+
+    const handleRemove = (id: number) => {
+
+        // If it was an old
+        if (id > 0) {
+
+            setModifications(prev => ({
+                ...prev,
+                removedPresenters: [...prev.removedPresenters, id]
+            }));
+        }
+
+        // If it was a new presenter
+        else if (id < 0) {
+
+            setNewPresenters(prev => {
+                const { [id]: _omit, ...rest } = prev;
+                return rest;
+            });
+        }
+    }
+
+    const handleRestore = (id: number) => {
+
+        // Id must be positive
+        if (id < 0) {
+            throw new Error("ValueError: id of presenter to restore must be positive");
+        }
 
         setModifications(prev => ({
             ...prev,
-            newPresenters: [...prev.newPresenters, data]
-        }));
+            removedPresenters: prev.removedPresenters.filter(val => val !== id)
+        }))
     }
 
 
@@ -56,10 +91,11 @@ export function ModifyPresentersArea({
         <div className="h-[88vh] grid grid-rows-[85%_10%] gap-4 " {...props}>
             <ScrollArea className='border-primary border-1 rounded-md '>
                 <TablePresenters
-                    className="table-fixed table-block "
+                    className="table-fixed table-block"
                     handleAdd={handleAdd}
-
-                    presenters={[...presenters, ...modifications.newPresenters]} />
+                    handleRemove={handleRemove}
+                    handleRestore={handleRestore}
+                    presenters={[...pPresenters, ...Object.values(newPresenters)]} />
             </ScrollArea>
             <div className="bg-gray-200">
                 <Button onClick={handleSave}>Guardar</Button>
