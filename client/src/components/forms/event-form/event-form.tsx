@@ -74,12 +74,9 @@ export function EventForm({
 
 
 
-    function onSubmit(values: z.infer<typeof EventFormSchema>) {
-
-        console.log(values);
+    function onSubmit(values: EventFormData) {
 
         handleSubmit(values);
-        // Aquí puedes manejar el envío de datos
     }
 
     const isAutomatic = form.watch("automatic");
