@@ -13,7 +13,7 @@ export default function LoginPage() {
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 
-
+        event.preventDefault();
         const formData = new FormData(event.currentTarget);
         // Get data
         const email = formData.get('email') as string;
@@ -33,9 +33,6 @@ export default function LoginPage() {
                 throw new Error("Error on login");
             }
 
-            // const { token } = await response.json();
-            // // stores 
-            // localStorage.setItem('authToken', token);
         }
         catch (e) {
 
