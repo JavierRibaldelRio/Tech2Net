@@ -1,13 +1,11 @@
 import { Request, Response } from "express";
-import createHttpError from "http-errors";
 
 import prisma from "../prisma/client";
 import { Prisma } from "@prisma/client";
 
 import { EventBackendSchema } from '../../../common/schemas/event.schema';
-import { PresenterBasicData as Presenter } from "../../../common/schemas/presenter.schema";
-
-import parseParamAsInt from "../utils/parseParamAsInt";
+import { PresenterBasicData as Presenter, PresentersDataToModifySchema } from "../../../common/schemas/presenter.schema";
+import { PresentersDataToModify } from "../../../common/types/Presenter.type";
 
 
 export const getEvents = async (req: Request, res: Response) => {
@@ -62,24 +60,7 @@ export const createEvent = async (req: Request, res: Response) => {
 
 }
 
-export const getPresenters = async (req: Request, res: Response) => {
-
-    const userId = req.userId;
-
-
-    // Gets the eventId and user Id
-    const eventId = parseParamAsInt(req.params.eventId);
-
-    // Checks if the event exists
-
-    const exists = await prisma.event.findUnique({
-        where: { id: eventId }
-    });
-
-    if (!exists) {
-        throw createHttpError(404, "Event not found");
-    }
-
+const getPresentersOfEvent = async (eventId: number, userId: number) => {
 
     const results: Presenter[] = await prisma.presenters.findMany({
         where: {
@@ -96,5 +77,83 @@ export const getPresenters = async (req: Request, res: Response) => {
         }
     });
 
+    return results;
+}
+
+export const getPresenters = async (req: Request, res: Response) => {
+    // Gets the eventId and user Id
+    const userId = req.userId;
+    const eventId = req.eventId;
+
+    const results = await getPresentersOfEvent(eventId, userId);
+
     res.status(200).json(results);
+}
+
+const addPresenters = async (newPresenters: Presenter[], userId: number, eventId: number) => {
+    // Adds the new presenters to the database removing the temp ids
+    await prisma.presenters.createMany({
+        data: newPresenters.map(presenter => ({
+            userId: userId,
+            eventId: eventId,
+            name: presenter.name,
+            email: presenter.email,
+            organization: presenter.organization,
+            description: presenter.description
+        }))
+    });
+}
+
+const editPresenters = async (editedPresenters: Presenter[], userId: number, eventId: number) => {
+
+    // Uses promises
+
+    const promises = editedPresenters.map(presenter => prisma.presenters.update({
+        where: {
+            id: presenter.id,
+            userId: userId,
+            eventId: eventId
+        },
+        data: {
+            name: presenter.name,
+            email: presenter.email,
+            organization: presenter.organization,
+            description: presenter.description
+        }
+    }));
+
+    await Promise.all(promises);
+}
+
+const removePresenters = async (removedPresenters: number[], userId: number, eventId: number) => {
+    // Removes the presenters from the database
+    await prisma.presenters.deleteMany({
+        where: {
+            id: { in: removedPresenters },
+            userId: userId,
+            eventId: eventId
+        }
+    });
+}
+// Modify Presenters
+export const modifyPresenters = async (req: Request, res: Response) => {
+    // Gets the eventId and user Id
+    const userId = req.userId;
+    const eventId = req.eventId;
+
+
+    // Get presenters data
+
+    const data = PresentersDataToModifySchema.parse(req.body);
+
+    await addPresenters(data.newPresenters, userId, eventId);
+    await editPresenters(data.editedPresenters, userId, eventId);
+    await removePresenters(data.removedPresenters, userId, eventId);
+
+    const updatedPresenters = await getPresentersOfEvent(eventId, userId);
+
+    res.status(200).json({
+        message: 'Presenters modified successfully',
+        presenters: updatedPresenters
+    });
 }

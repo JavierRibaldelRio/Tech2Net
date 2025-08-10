@@ -36,7 +36,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "../common/*"
+    "../common/*",
+    "src/app/app/events/create/[eventId]/presenters/components"
   ],
   "exclude": [
     "node_modules"

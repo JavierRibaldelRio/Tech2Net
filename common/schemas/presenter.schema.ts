@@ -8,6 +8,11 @@ const PresenterBasicSchema = z.object({
     description: z.string()
 
 });
+const PresentersDataToModifySchema = z.object({
+    newPresenters: z.array(PresenterBasicSchema),
+    editedPresenters: z.array(PresenterBasicSchema),
+    removedPresenters: z.array(z.number()),
+});
 
-export { PresenterBasicSchema }
+export { PresenterBasicSchema, PresentersDataToModifySchema }
 export type PresenterBasicData = z.infer<typeof PresenterBasicSchema>;

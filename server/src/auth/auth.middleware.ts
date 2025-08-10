@@ -7,7 +7,7 @@ import { JWT_SECRET } from '../config';
 // Extend the Request interface to include userId
 declare module 'express-serve-static-core' {
     interface Request {
-        userId?: number;
+        userId: number;
     }
 }
 

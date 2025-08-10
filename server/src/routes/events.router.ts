@@ -1,10 +1,13 @@
 import { Router } from "express";
 import { authenticate } from "../auth/auth.middleware";
+import verificateEvent from "../middleware/verificateEvent.middleware";
 import {
     getEvents,
     createEvent,
-    getPresenters
+    getPresenters,
+    modifyPresenters
 } from "../controllers/events.controller";
+
 
 const eventRouter = Router();
 
@@ -20,6 +23,8 @@ eventRouter.post("/create_event", createEvent);
 
 
 // Presenters
-eventRouter.get("/get_presenters/:eventId", getPresenters);
+
+eventRouter.get("/get_presenters/:eventId", verificateEvent, getPresenters);
+eventRouter.post("/modify_presenters/:eventId", verificateEvent, modifyPresenters);
 
 export default eventRouter;

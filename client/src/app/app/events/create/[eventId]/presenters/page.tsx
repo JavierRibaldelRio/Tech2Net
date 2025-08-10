@@ -4,8 +4,10 @@ import { apiRoute } from "@/lib/api-express";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import Presenter from ":neth4tech/types/Presenter.type"
-import { ModifyPresentersArea } from "./components.tsx/ModifyPresentersArea";
+import { PresentersDataToModify } from ":neth4tech/types/Presenter.type"
+import { PresenterBasicData as Presenter } from ':neth4tech/schemas/presenter.schema';
+
+import { ModifyPresentersArea } from "./components/ModifyPresentersArea";
 
 
 export default function ModifyPresentersPage() {
@@ -20,9 +22,7 @@ export default function ModifyPresentersPage() {
     useEffect(() => {
 
         const fetchParticipants = async () => {
-
-
-            const response = await fetch(apiRoute('/api/events/get_users/' + eventId), {
+            const response = await fetch(apiRoute('/api/events/get_presenters/' + eventId), {
                 credentials: 'include'
             });
 
@@ -45,6 +45,26 @@ export default function ModifyPresentersPage() {
 
     }, [setPresenters]);
 
+    const save = async (data: PresentersDataToModify) => {
+        const response = await fetch(apiRoute('/api/events/modify_presenters/' + eventId), {
+            method: 'POST',
+            credentials: "include",
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message);
+        }
+        else {
+
+            console.log('await response.json() :>> ', await response.json());
+        }
+    }
     // If error
     if (typeof presenters === "string") {
 
@@ -59,6 +79,9 @@ export default function ModifyPresentersPage() {
 
     return (<div className="margin-[4px]" style={{ margin: "4vmax" }}>
 
-        <ModifyPresentersArea pPresenters={presenters} /></div>
+        <ModifyPresentersArea
+            pPresenters={presenters}
+            save={save}
+        /></div>
     )
 }
