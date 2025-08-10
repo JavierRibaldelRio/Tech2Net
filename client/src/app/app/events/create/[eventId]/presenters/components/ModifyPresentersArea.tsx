@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import Presenter from ":neth4tech/types/Presenter.type"
 import { Button } from '@/components/ui/button';
 import { TablePresenters } from './TablePresenters';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { PresenterBasicData } from ':neth4tech/schemas/presenter.schema';
+import { PresenterBasicData as Presenter } from ':neth4tech/schemas/presenter.schema';
+import { PresentersDataToModify } from ':neth4tech/types/Presenter.type';
 
 
 
 interface ModifyPresentersAreaProps extends React.ComponentProps<"div"> {
 
-    save?: () => void;
+    save: (data: PresentersDataToModify) => void;
     pPresenters: Presenter[];
 
 }
@@ -39,7 +39,7 @@ export function ModifyPresentersArea({
 
     // Modifications functions
 
-    const handleAdd = (data: PresenterBasicData) => {
+    const handleAdd = (data: Presenter) => {
 
         const id = genTempId();
         data.id = id;
@@ -47,11 +47,11 @@ export function ModifyPresentersArea({
         setNewPresenters(prev => ({ ...prev, [id]: data }));
     }
 
-    const handleEdit = (data: PresenterBasicData) => {
+
+    const handleEdit = (data: Presenter) => {
 
         // If it was a new presenter
         if (data.id < 0) {
-
             setNewPresenters(prev => ({ ...prev, [data.id]: data }));
         }
 
@@ -103,7 +103,16 @@ export function ModifyPresentersArea({
     // Transform the data to the backend format and sends it to the parent component
     const handleSave = () => {
 
-        console.log('Guardando ^_^ ');
+        // Format data
+
+        const dataToSave: PresentersDataToModify = {
+            newPresenters: Object.values(newPresenters),
+            editedPresenters: Object.values(modifications.editedPresenters),
+            removedPresenters: modifications.removedPresenters
+        };
+
+
+        save(dataToSave);
     }
 
     return (
