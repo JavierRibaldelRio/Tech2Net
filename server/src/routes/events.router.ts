@@ -3,6 +3,7 @@ import { authenticate } from "../auth/auth.middleware";
 import verificateEvent from "../middleware/verificateEvent.middleware";
 import {
     getEvents,
+    getEvent,
     createEvent,
     getPresenters,
     modifyPresenters
@@ -16,6 +17,7 @@ eventRouter.use(authenticate);
 
 // Get actual events
 eventRouter.get("/get_events", getEvents);
+eventRouter.get("/get_event/:eventId", verificateEvent, getEvent);
 
 // Create a new event
 eventRouter.post("/create_event", createEvent);

@@ -28,6 +28,31 @@ export const getEvents = async (req: Request, res: Response) => {
     res.status(200).json(results);
 }
 
+// Gets all the data of an event including the presenters
+export const getEvent = async (req: Request, res: Response) => {
+
+    const userId = req.userId;
+    const eventId = req.eventId;
+
+    const event = await prisma.event.findUnique({
+        where: { id: eventId },
+        include: {
+            presenters: {
+                where: { userId: userId },
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    organization: true,
+                    description: true
+                }
+            }
+        }
+    });
+
+    res.status(200).json(event);
+}
+
 export const createEvent = async (req: Request, res: Response) => {
 
     const userId = req.userId;
