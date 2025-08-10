@@ -13,10 +13,6 @@ export default function CreateEventPage() {
         // Parse data to format excepted at backend
         const dataParsed = parseEvent(data, STATUS.DRAFT);
 
-        // TODO call API
-
-        console.log(dataParsed);
-
         const response = await fetch(apiRoute("/api/events/create_event"),
 
             {
@@ -34,7 +30,7 @@ export default function CreateEventPage() {
             throw new Error(errorData.message);
         }
         else {
-
+            // TODO
             console.log('await response.json() :>> ', await response.json());
         }
 
