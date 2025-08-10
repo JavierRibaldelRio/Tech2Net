@@ -3,7 +3,7 @@ import { authenticate } from "../auth/auth.middleware";
 import {
     getEvents,
     createEvent,
-    getUsers
+    getPresenters
 } from "../controllers/events.controller";
 
 const eventRouter = Router();
@@ -20,6 +20,6 @@ eventRouter.post("/create_event", createEvent);
 
 
 // Presenters
-eventRouter.get("/get_users/:eventId", getUsers);
+eventRouter.get("/get_presenters/:eventId", getPresenters);
 
 export default eventRouter;

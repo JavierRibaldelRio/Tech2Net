@@ -1,8 +1,7 @@
-export default interface Presenter {
+import { PresenterBasicData as Presenter } from "../schemas/presenter.schema";
 
-    id: number,
-    name: string,
-    email: string,
-    organization: string,
-    description: string
+export interface PresentersDataToModify {
+    newPresenters: Presenter[];
+    editedPresenters: Presenter[];
+    removedPresenters: number[];
 }

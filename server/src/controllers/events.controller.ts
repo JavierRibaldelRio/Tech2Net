@@ -5,7 +5,7 @@ import prisma from "../prisma/client";
 import { Prisma } from "@prisma/client";
 
 import { EventBackendSchema } from '../../../common/schemas/event.schema';
-import Presenter from "../../../common/types/Presenter.type";
+import { PresenterBasicData as Presenter } from "../../../common/schemas/presenter.schema";
 
 import parseParamAsInt from "../utils/parseParamAsInt";
 
@@ -62,7 +62,7 @@ export const createEvent = async (req: Request, res: Response) => {
 
 }
 
-export const getUsers = async (req: Request, res: Response) => {
+export const getPresenters = async (req: Request, res: Response) => {
 
     const userId = req.userId;
 
@@ -70,16 +70,11 @@ export const getUsers = async (req: Request, res: Response) => {
     // Gets the eventId and user Id
     const eventId = parseParamAsInt(req.params.eventId);
 
-    console.log('userId :>> ', userId);
-    console.log('eventId :>> ', eventId);
-
     // Checks if the event exists
 
     const exists = await prisma.event.findUnique({
         where: { id: eventId }
     });
-
-    console.log('exists :>> ', exists);
 
     if (!exists) {
         throw createHttpError(404, "Event not found");
@@ -101,7 +96,5 @@ export const getUsers = async (req: Request, res: Response) => {
         }
     });
 
-
     res.status(200).json(results);
-
 }
