@@ -11,14 +11,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
-    FormLabel,
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
-import { TextareaSizable, Textarea } from "@/components/ui/textarea";
+import { TextareaSizable } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -31,61 +29,86 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 
-import { NotepadTextIcon, PlusIcon } from "lucide-react";
+import { NotepadTextIcon, PlusIcon, RotateCcwIcon, CheckIcon, } from "lucide-react";
 import { DialogClose } from "@radix-ui/react-dialog";
+
+const DEFAULT_VALUES: PresenterBasicData = {
+    id: 0,
+    name: "",
+    email: "",
+    organization: "",
+    description: "",
+}
 
 
 interface FormPresenterProps extends React.ComponentProps<"tr"> {
 
-    handleAdd: (data: PresenterBasicData) => void;
-    isEditMode?: boolean;         // Check if is the form of adding a new user or edit another
+    handleAction: (data: PresenterBasicData) => void;
+    handleReset?: () => void;      // for button to close the form
+    isEditMode: boolean;         // Check if is the form of adding a new user or edit another
+    presenter?: PresenterBasicData
 }
 
 export function FormPresenter({
     className,
-    handleAdd,
-    isEditMode,
+    handleAction,
+    handleReset = () => { },
+    isEditMode = true,
+    presenter = DEFAULT_VALUES,
     ...props
 }: FormPresenterProps) {
+
+
 
     const form = useForm<PresenterBasicData>({
 
         resolver: zodResolver(PresenterBasicSchema),
 
         //Needed
-
-        defaultValues: {
-            id: 0,
-            name: "",
-            email: "",
-            organization: "",
-            description: "",
-        }
+        defaultValues: presenter
     });
 
 
     const onSubmit = (values: PresenterBasicData) => {
 
-        handleAdd(values);
+        handleAction(values);
 
         form.reset();
     }
 
-    return <TableRow className={cn("", className)}>
+
+    let formClass = "grid grid-cols-[21fr_21fr_16fr_26fr_10fr] w-full p-2 items-center";
+
+    let buttonAreaContent = <>
+        <Button size="icon" className="size-7" variant="secondary" onClick={handleReset} >
+            <RotateCcwIcon />
+        </Button>
+        <Button size="icon" className="size-7" type="submit"  >
+            <CheckIcon />
+        </Button>
+    </>
+
+    if (isEditMode === false) {
+
+        formClass += " border-primary border-t-1 "
+
+        buttonAreaContent = <Button type="submit"
+            className="w-full px-2 py-1">  Añadir <PlusIcon /></Button>
+    }
+
+
+    return <TableRow className={cn(" ", className)}>
         <TableCell colSpan={6} className="p-0">
             <Form {...form} >
                 <div>
 
-                    <form className="grid grid-cols-[21fr_21fr_16fr_26fr_10fr] w-full p-2 y border-primary border-t-1 items-center"
+                    <form className={formClass}
 
                         onSubmit={form.handleSubmit(onSubmit)}
                     >
 
                         {/* Hidden input */}
-
-                        <input type="number" name="id" value={0} readOnly hidden />
-
-
+                        <input type="number" name="id" value={presenter.id} readOnly hidden />
 
                         {/* Nombre */}
                         <FormField
@@ -95,7 +118,7 @@ export function FormPresenter({
                                 <FormItem className="w-full px-2 "
                                 >
                                     <FormControl>
-                                        <Input placeholder="" {...field} />
+                                        <Input placeholder="" {...field} className="" />
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -171,8 +194,9 @@ export function FormPresenter({
                             </Dialog>
                         </div>
 
-                        <Button type="submit"
-                            className="w-full px-2 py-1">Añadir <PlusIcon /></Button>
+                        <div className="flex justify-around w-full">
+                            {buttonAreaContent}
+                        </div>
 
                     </form>
                 </div>

@@ -18,7 +18,7 @@ import { PresenterBasicData } from ':neth4tech/schemas/presenter.schema';
 interface TablePresentersProps extends React.ComponentProps<"table"> {
 
     handleAdd: (data: PresenterBasicData) => void;
-    handleEdit?: () => any;
+    handleEdit: (data: PresenterBasicData) => void;
     handleRemove: (id: number) => void;
     handleRestore: (id: number) => void;
 
@@ -41,6 +41,7 @@ export function TablePresenters({
         presenter={p}
         i={i + 1}
         key={p.id}
+        handleEdit={handleEdit}
         handleRemove={handleRemove}
         handleRestore={handleRestore}
     />);
@@ -63,9 +64,11 @@ export function TablePresenters({
                 {tableContent}
             </TableBody>
 
-            <TableFooter className="sticky bottom-0 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.0.4)]">
+            <TableFooter className="sticky bottom-0 border-none bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.0.4)]">
                 <FormPresenter
-                    handleAdd={handleAdd}
+                    handleAction={handleAdd}
+                    isEditMode={false}
+                    className=" "
                 />
             </TableFooter>
 

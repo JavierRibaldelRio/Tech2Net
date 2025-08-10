@@ -17,7 +17,7 @@ interface ModifyPresentersAreaProps extends React.ComponentProps<"div"> {
 interface Modifications {
 
     removedPresenters: number[];
-    editedPresenters: Presenter[];
+    editedPresenters: Record<number, Presenter>;
 }
 
 let tempCounter = -1;
@@ -32,8 +32,9 @@ export function ModifyPresentersArea({
     ...props
 }: ModifyPresentersAreaProps) {
 
+
     const [newPresenters, setNewPresenters] = useState<Record<number, Presenter>>({});
-    const [modifications, setModifications] = useState<Modifications>({ removedPresenters: [], editedPresenters: [] });
+    const [modifications, setModifications] = useState<Modifications>({ removedPresenters: [], editedPresenters: {} });
 
 
     // Modifications functions
@@ -44,6 +45,24 @@ export function ModifyPresentersArea({
         data.id = id;
 
         setNewPresenters(prev => ({ ...prev, [id]: data }));
+    }
+
+    const handleEdit = (data: PresenterBasicData) => {
+
+        // If it was a new presenter
+        if (data.id < 0) {
+
+            setNewPresenters(prev => ({ ...prev, [data.id]: data }));
+        }
+
+        // If it was an old presenter
+        else {
+
+            setModifications(prev => ({
+                ...prev,
+                editedPresenters: { ...prev.editedPresenters, [data.id]: data }
+            }));
+        }
     }
 
     const handleRemove = (id: number) => {
@@ -93,6 +112,7 @@ export function ModifyPresentersArea({
                 <TablePresenters
                     className="table-fixed table-block"
                     handleAdd={handleAdd}
+                    handleEdit={handleEdit}
                     handleRemove={handleRemove}
                     handleRestore={handleRestore}
                     presenters={[...pPresenters, ...Object.values(newPresenters)]} />
