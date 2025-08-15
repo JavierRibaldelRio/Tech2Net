@@ -85,7 +85,6 @@ function RowPresenters({
         // Ensures that the id has not been changed
         const presenter = data;
         presenter.id = pPresenter.id;
-        console.log('obj :>> ');
         // Update status
         setEditionStatus(EditionStatus.EDITED);
         setIsEdited(true);

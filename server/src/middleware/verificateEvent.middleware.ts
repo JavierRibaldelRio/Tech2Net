@@ -31,8 +31,6 @@ const verificateEvent = async (req: Request, res: Response, next: NextFunction) 
 
     req.eventId = eventId;
 
-    console.log('req.eventId :>> ', req.eventId);
-
     next();
 
 }

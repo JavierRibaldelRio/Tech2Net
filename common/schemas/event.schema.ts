@@ -44,7 +44,6 @@ export const EventFormSchema = EventBasic.extend({
 })
     .superRefine((data, ctx) => {
 
-        console.log('obj :>> ');
         if (data.automatic) {
             if (!timeRegex.test(data.formOpenTime ?? "")) {
                 ctx.addIssue({
