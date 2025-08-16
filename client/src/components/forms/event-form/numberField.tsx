@@ -35,8 +35,6 @@ export function NumberField<T extends FieldValues>({
             name={name}
             render={({ field }) => {
 
-                console.log('field :>> ', field);
-
                 return (
                     <FormItem className={className} >
                         <FormLabel>{label} </FormLabel>
