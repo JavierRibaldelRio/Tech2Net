@@ -11,8 +11,18 @@ declare module 'express-serve-static-core' {
     }
 }
 
-
-
+/**
+ * Middleware to authenticate requests using JWT stored in cookies.
+ * 
+ * - Checks for the presence of an authToken cookie.
+ * - Verifies the JWT token using the configured secret.
+ * - Attaches the decoded userId to the request object.
+ * 
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ * @throws {HttpError} 401 if token is missing or invalid
+ */
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
 
     const token = req.cookies.authToken;
