@@ -30,6 +30,12 @@ const generateToken = (user: User): string => {
     });
 };
 
+/**
+ * Sets the authentication cookie in the response.
+ * 
+ * @param {Response} res - Express response object
+ * @param {string} token - JWT token to set in cookie
+ */
 const setAuthCookie = (res: Response, token: string): void => {
 
     res.cookie('authToken', token, {
@@ -45,7 +51,14 @@ const setAuthCookie = (res: Response, token: string): void => {
     });
 }
 
-//Creates user and returns its token 
+/**
+ * Registers a new user, sets authentication cookie, and returns a success message.
+ * 
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @throws {HttpError} 409 if user already exists
+ * @returns {Promise<void>}
+ */
 export const registerUser = async (req: Request, res: Response) => {
 
 
@@ -86,7 +99,14 @@ export const registerUser = async (req: Request, res: Response) => {
 }
 
 
-// Given the email & password, returns token
+/**
+ * Authenticates a user with email and password, sets authentication cookie, and returns a success message.
+ * 
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @throws {HttpError} 400 if credentials are invalid
+ * @returns {Promise<Response>}
+ */
 export const loginUser = async (req: Request, res: Response) => {
 
     const { email, password } = req.body;
@@ -114,8 +134,13 @@ export const loginUser = async (req: Request, res: Response) => {
 };
 
 
-
-
+/**
+ * Logs out the user by clearing the authentication cookie.
+ * 
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @returns {Promise<void>}
+ */
 export const logoutUser = async (req: Request, res: Response) => {
     res.clearCookie('authToken', {
         httpOnly: true,
