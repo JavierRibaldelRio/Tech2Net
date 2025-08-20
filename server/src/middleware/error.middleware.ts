@@ -10,6 +10,22 @@ import { HttpError } from 'http-errors'
 
 
 
+/**
+ * Express error handling middleware.
+ * 
+ * Handles different error types:
+ * - Zod validation errors (400 Bad Request)
+ * - Prisma database errors (409 Conflict, 404 Not Found, 500 Database Error)
+ * - Custom HTTP errors (uses status code from error)
+ * - Generic JavaScript errors (500 Internal Server Error)
+ * - Fallback for unknown errors (500 Unknown Error)
+ * 
+ * @param {ErrorRequestHandler} err - The error object
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ * @returns {Response} JSON error response with appropriate status code
+ */
 export const errorHandler = (err: ErrorRequestHandler, req: Request, res: Response, next: NextFunction) => {
 
     console.error('[Error Handler]', err);
