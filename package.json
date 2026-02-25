@@ -1,0 +1,16 @@
+{
+    "name": "frontend",
+    "private": true,
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "start": "concurrently \"npm run start-backend\" \"npm run start-frontend\" \"npm run start-electron\"",
+        "start-backend": "cd backend && uvicorn main:app --reload --host localhost --port 8000",
+        "start-frontend": "cd frontend && vite",
+        "start-electron": "electron electron/main.cjs"
+    },
+    "devDependencies": {
+        "vite": "^5.2.0",
+        "concurrently": "^7.0.0"
+    }
+}
