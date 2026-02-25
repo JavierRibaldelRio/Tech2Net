@@ -1,0 +1,6 @@
+*.code-workspace
+.vscode/
+dist/
+node_modules/
+
+notes.txt
