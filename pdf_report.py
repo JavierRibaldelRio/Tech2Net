@@ -2,74 +2,92 @@ import pandas as pd
 from weasyprint import HTML
 
 
-def generate_pdf(schedule, stats, time_slots, output_file):
+def generate_pdf(
+    schedule,
+    stats,
+    time_slots,
+    output_file,
+    *,
+    time_title="time",
+    speaker_title="speaker",
+    company_title="company",
+):
 
     df = pd.DataFrame(schedule)
 
     # Convert slot index to time label
     df["time"] = df["slot"].apply(lambda s: time_slots[s - 1])
 
+    # Display names for columns (customizable)
+    display_df = df.rename(
+        columns={"time": time_title, "speaker": speaker_title, "company": company_title}
+    )
+
     sections = []
 
     # -------- GENERAL --------
-    sections.append(f"""
+    sections.append(
+        f"""
     <div>
         <h1>General Results</h1>
         <p>Total meetings: <b>{stats['meetings']}</b></p>
         <p>Optimal solution: <b>{stats['optimal']}</b></p>
     </div>
-    """)
+    """
+    )
 
     # -------- GLOBAL --------
     global_table = (
-        df[["time", "speaker", "company"]]
-        .sort_values(["time", "speaker"])
+        display_df[[time_title, speaker_title, company_title]]
+        .sort_values([time_title, speaker_title])
         .to_html(index=False)
     )
 
-    sections.append(f"""
+    sections.append(
+        f"""
     <div class="page">
         <h1>Global Schedule</h1>
         {global_table}
     </div>
-    """)
+    """
+    )
 
     # -------- PER COMPANY --------
-    for c in sorted(df["company"].unique()):
-        sub = df[df["company"] == c].sort_values("time")
-        table = sub[["time", "speaker"]].to_html(index=False)
+    for c in sorted(display_df[company_title].unique()):
+        sub = display_df[display_df[company_title] == c].sort_values(time_title)
+        table = sub[[time_title, speaker_title]].to_html(index=False)
 
-        sections.append(f"""
+        sections.append(
+            f"""
         <div class="page">
-            <h1>Company: {c}</h1>
+            <h1>{company_title}: {c}</h1>
             {table}
         </div>
-        """)
+        """
+        )
 
     # -------- PER SPEAKER --------
-    for s in sorted(df["speaker"].unique()):
-        sub = df[df["speaker"] == s].sort_values("time")
-        table = sub[["time", "company"]].to_html(index=False)
+    for s in sorted(display_df[speaker_title].unique()):
+        sub = display_df[display_df[speaker_title] == s].sort_values(time_title)
+        table = sub[[time_title, company_title]].to_html(index=False)
 
-        sections.append(f"""
+        sections.append(
+            f"""
         <div class="page">
-            <h1>Speaker: {s}</h1>
+            <h1>{speaker_title}: {s}</h1>
             {table}
         </div>
-        """)
+        """
+        )
 
-    
     # -------- SLOT x SPEAKER MATRIX --------
 
     # Crear tabla base
-    matrix_df = df.copy()
+    matrix_df = display_df.copy()
 
     # Pivot: filas = time, columnas = speaker
     pivot = matrix_df.pivot_table(
-        index="time",
-        columns="speaker",
-        values="company",
-        aggfunc="first"
+        index=time_title, columns=speaker_title, values=company_title, aggfunc="first"
     )
 
     # Ordenar por tiempo según time_slots
@@ -77,12 +95,14 @@ def generate_pdf(schedule, stats, time_slots, output_file):
 
     pivot_html = pivot.fillna("").to_html()
 
-    sections.append(f"""
+    sections.append(
+        f"""
     <div class="page general">
-        <h1>Schedule Matrix (Time × Speaker)</h1>
+        <h1>{time_title} × {speaker_title}</h1>
         {pivot_html}
     </div>
-    """)    
+    """
+    )
 
     html = f"""
     <html>
@@ -93,6 +113,7 @@ def generate_pdf(schedule, stats, time_slots, output_file):
 
             h1 {{
                 border-bottom: 2px solid black;
+                text-transform: capitalize;
             }}
 
             table {{
@@ -127,7 +148,6 @@ def generate_pdf(schedule, stats, time_slots, output_file):
     </body>
     </html>
     """
-
 
     HTML(string=html).write_pdf(output_file)
 
