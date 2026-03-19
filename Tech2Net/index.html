@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Networking Scheduler</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="src/styles.css" />
 </head>
 
 <body>
@@ -17,13 +17,27 @@
     <button id="btn-file">Select file</button>
     <div id="file-path">No file selected</div>
 
+    <div id="csv-preview"></div>
+    <div id="col-legend" hidden>
+      <span class="legend-dot company"></span> Company cols &nbsp;&nbsp;
+      <span class="legend-dot speaker"></span> Speaker cols &nbsp;&nbsp;
+      <span class="legend-dot none"></span> Sin asignar
+    </div>
+
+    <label>Company columns (1-based, space separated)</label>
+    <input id="company-cols" type="text" value="1 2" />
+
+    <label>Speaker columns (1-based, space separated)</label>
+    <input id="speaker-cols" type="text" value="3 4 5 6 7 8 9 10" />
+
     <label>Time slots (one per line)</label>
-    <textarea id="slots">
-10:00–10:15
-10:20–10:35
-10:40–10:55
-11:00–11:15
-    </textarea>
+    <textarea id="slots">13:20–13:30
+13:30–13:40
+13:40–13:50
+13:50–14:00
+14:00–14:10</textarea>
+
+    <div id="error-banner" hidden></div>
 
     <button id="btn-run" class="primary">
       Generate schedule

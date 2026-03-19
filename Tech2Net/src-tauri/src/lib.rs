@@ -5,13 +5,29 @@ use tauri_plugin_dialog;
 use tauri_plugin_shell;
 use tauri_plugin_opener;
 
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 
-// --- Comando opcional de ejemplo ---
-// Puedes eliminarlo si no lo usas
+
+// --- Lee las primeras N líneas de un CSV y las devuelve ---
 
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+fn read_csv_preview(path: String, rows: usize) -> Result<Vec<Vec<String>>, String> {
+    let file = File::open(&path).map_err(|e| e.to_string())?;
+    let reader = BufReader::new(file);
+
+    let result: Vec<Vec<String>> = reader
+        .lines()
+        .take(rows)
+        .filter_map(|l| l.ok())
+        .map(|line| {
+            line.split(',')
+                .map(|cell| cell.trim().to_string())
+                .collect()
+        })
+        .collect();
+
+    Ok(result)
 }
 
 
@@ -31,8 +47,8 @@ pub fn run() {
         // Ejecutar procesos externos (tu scheduler Python)
         .plugin(tauri_plugin_shell::init())
 
-        // Comandos Rust accesibles desde frontend (opcional)
-        .invoke_handler(tauri::generate_handler![greet])
+        // Comandos Rust accesibles desde frontend
+        .invoke_handler(tauri::generate_handler![read_csv_preview])
 
         // Lanzar la aplicación
         .run(tauri::generate_context!())

@@ -31,7 +31,7 @@ def main():
     parser.add_argument(
         "--time-slots",
         nargs="+",
-        default=["10:00–10:15", "10:20–10:35", "10:40–10:55", "11:00–11:15", "11:20–11:35"],
+        default=["13:20–13:30", "13:30–13:40", "13:40–13:50", "13:50–14:00", "14:00–14:10"],
         metavar="SLOT",
         help='Time slot labels (default: 5 slots from 10:00)',
     )
