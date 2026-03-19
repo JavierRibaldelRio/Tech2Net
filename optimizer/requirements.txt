@@ -1,4 +1,5 @@
 absl-py==2.4.0
+xhtml2pdf==0.2.16
 altgraph==0.17.5
 immutabledict==4.3.1
 numpy==2.4.3

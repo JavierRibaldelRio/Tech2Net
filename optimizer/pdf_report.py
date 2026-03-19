@@ -1,5 +1,5 @@
 import pandas as pd
-from weasyprint import HTML
+from xhtml2pdf import pisa
 
 
 def generate_pdf(
@@ -149,6 +149,7 @@ def generate_pdf(
     </html>
     """
 
-    HTML(string=html).write_pdf(output_file)
+    with open(output_file, "wb") as f:
+        pisa.CreatePDF(html, dest=f)
 
     print("PDF generated:", output_file)
