@@ -1,0 +1,51 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #1e1e1e;
+  color: #eee;
+  margin: 30px;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.card {
+  background: #2a2a2a;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+textarea {
+  width: 100%;
+  height: 120px;
+  background: #111;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 8px;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.primary {
+  background: #4cafef;
+  color: white;
+}
+
+pre {
+  background: #111;
+  padding: 10px;
+  height: 200px;
+  overflow: auto;
+}

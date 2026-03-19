@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Networking Scheduler</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <h1>Networking Scheduler</h1>
+
+  <div class="card">
+
+    <label>Input CSV</label>
+    <button id="btn-file">Select file</button>
+    <div id="file-path">No file selected</div>
+
+    <label>Time slots (one per line)</label>
+    <textarea id="slots">
+10:00–10:15
+10:20–10:35
+10:40–10:55
+11:00–11:15
+    </textarea>
+
+    <button id="btn-run" class="primary">
+      Generate schedule
+    </button>
+
+  </div>
+
+  <div class="card">
+
+    <h2>Logs</h2>
+    <pre id="logs"></pre>
+
+  </div>
+
+  <script type="module" src="src/main.ts"></script>
+
+</body>
+
+</html>
