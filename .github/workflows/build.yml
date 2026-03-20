@@ -53,7 +53,7 @@ jobs:
       - name: Build sidecar (PyInstaller)
         run: |
           cd optimizer
-          pyinstaller --onefile --collect-all ortools --name scheduler main.py
+          pyinstaller --onefile --collect-all ortools --collect-all xhtml2pdf --collect-all reportlab --name scheduler main.py
 
       - name: Copy sidecar to Tauri bin (Unix)
         if: matrix.binary_ext == ''
