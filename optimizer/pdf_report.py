@@ -97,7 +97,7 @@ def generate_pdf(
 
     sections.append(
         f"""
-    <div class="page general">
+    <div class="landscape general">
         <h1>{time_title} × {speaker_title}</h1>
         {pivot_html}
     </div>
@@ -109,7 +109,10 @@ def generate_pdf(
     <head>
         <meta charset="utf-8">
         <style>
-            body {{ font-family: Arial; }}
+            @page {{ size: A4 portrait; margin: 1.5cm; }}
+            @page landscape {{ size: A4 landscape; margin: 1.5cm; }}
+
+            body {{ font-family: Arial; font-size: 11px; }}
 
             h1 {{
                 border-bottom: 2px solid black;
@@ -120,25 +123,27 @@ def generate_pdf(
                 border-collapse: collapse;
                 width: 100%;
                 margin-top: 15px;
-
             }}
 
             th, td {{
                 border: 1px solid #444;
-                padding: 6px;
+                padding: 4px 6px;
                 text-align: center;
-
-
             }}
 
             .general td,
             .general th {{
-
-                  font-size: 10px;
-
+                font-size: 7px;
+                padding: 3px 4px;
+                word-break: break-word;
             }}
 
             .page {{
+                page-break-before: always;
+            }}
+
+            .landscape {{
+                page: landscape;
                 page-break-before: always;
             }}
         </style>
