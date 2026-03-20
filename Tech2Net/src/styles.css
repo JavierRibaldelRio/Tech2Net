@@ -227,6 +227,51 @@ button:hover {
 #csv-preview th.col-speaker { background: #bfdbfe; color: #1d4ed8; border-bottom-color: #93c5fd; }
 #csv-preview th.col-none    { background: #f3f4f6; color: #6b7280; border-bottom-color: #e5e7eb; }
 
+/* ---------- SLOTS PREVIEW ---------- */
+
+#slots-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  min-height: 28px;
+}
+
+.slot-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  font-family: monospace;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.slot-pill .slot-num {
+  background: #2563eb;
+  color: #fff;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.slot-pill.invalid {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
 /* ---------- LOGS ---------- */
 
 pre {

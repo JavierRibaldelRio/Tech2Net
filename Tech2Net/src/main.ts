@@ -87,6 +87,29 @@ function updateColumnHighlights() {
 inputCompany.addEventListener("input", updateColumnHighlights);
 inputSpeaker.addEventListener("input", updateColumnHighlights);
 
+// -------- SLOTS PREVIEW --------
+
+const slotsTextarea = document.getElementById("slots") as HTMLTextAreaElement;
+const slotsPreview  = document.getElementById("slots-preview")!;
+
+function updateSlotsPreview() {
+  const lines = slotsTextarea.value.split("\n").map(s => s.trim()).filter(s => s.length > 0);
+  slotsPreview.innerHTML = "";
+  lines.forEach((line, i) => {
+    const pill = document.createElement("span");
+    pill.className = "slot-pill";
+    const num = document.createElement("span");
+    num.className = "slot-num";
+    num.textContent = String(i + 1);
+    pill.appendChild(num);
+    pill.appendChild(document.createTextNode(line));
+    slotsPreview.appendChild(pill);
+  });
+}
+
+slotsTextarea.addEventListener("input", updateSlotsPreview);
+updateSlotsPreview();
+
 // -------- SELECT FILE --------
 
 document.getElementById("btn-file")!.addEventListener("click", async () => {
