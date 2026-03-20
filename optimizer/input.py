@@ -84,7 +84,7 @@ def load_matrix(
 
     for c_idx, c in enumerate(companies):
         for s_idx, s in enumerate(speakers):
-            if df_speakers.iloc[c_idx, s_idx] == 1:
+            if df_speakers.iloc[c_idx, s_idx] not in (0, "", None, False):
                 matrix.setdefault(s, []).append(c)
 
     return {"companies": companies, "speakers": speakers, "matrix": matrix}
