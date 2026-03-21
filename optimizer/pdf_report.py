@@ -95,6 +95,18 @@ def generate_pdf(
 
     pivot_html = pivot.fillna("").to_html()
 
+    # Forzar anchos de columna: primera columna fija, el resto a partes iguales
+    n_data_cols = len(pivot.columns)
+    first_pct = 15
+    rest_pct = round((100 - first_pct) / n_data_cols, 2) if n_data_cols else 85
+    colgroup = (
+        "<colgroup>"
+        + f'<col style="width:{first_pct}%">'
+        + "".join(f'<col style="width:{rest_pct}%">' for _ in range(n_data_cols))
+        + "</colgroup>"
+    )
+    pivot_html = pivot_html.replace("<thead>", colgroup + "<thead>", 1)
+
     sections.append(
         f"""
     <div class="landscape general">
@@ -131,11 +143,16 @@ def generate_pdf(
                 text-align: center;
             }}
 
+            .general table {{
+                table-layout: fixed;
+            }}
+
             .general td,
             .general th {{
                 font-size: 7px;
                 padding: 3px 4px;
                 word-break: break-word;
+                overflow: hidden;
             }}
 
             .page {{
