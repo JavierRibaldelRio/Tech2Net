@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 from xhtml2pdf import pisa
 
@@ -80,41 +82,14 @@ def generate_pdf(
         """
         )
 
-    # -------- SLOT x SPEAKER MATRIX --------
+    # -------- SLOT x SPEAKER MATRIX (CSV) --------
 
-    # Crear tabla base
-    matrix_df = display_df.copy()
-
-    # Pivot: filas = time, columnas = speaker
-    pivot = matrix_df.pivot_table(
+    pivot = display_df.pivot_table(
         index=time_title, columns=speaker_title, values=company_title, aggfunc="first"
-    )
+    ).reindex(time_slots)
 
-    # Ordenar por tiempo según time_slots
-    pivot = pivot.reindex(time_slots)
-
-    pivot_html = pivot.fillna("").to_html()
-
-    # Forzar anchos de columna: primera columna fija, el resto a partes iguales
-    n_data_cols = len(pivot.columns)
-    first_pct = 15
-    rest_pct = round((100 - first_pct) / n_data_cols, 2) if n_data_cols else 85
-    colgroup = (
-        "<colgroup>"
-        + f'<col style="width:{first_pct}%">'
-        + "".join(f'<col style="width:{rest_pct}%">' for _ in range(n_data_cols))
-        + "</colgroup>"
-    )
-    pivot_html = pivot_html.replace("<thead>", colgroup + "<thead>", 1)
-
-    sections.append(
-        f"""
-    <div class="landscape general">
-        <h1>{time_title} × {speaker_title}</h1>
-        {pivot_html}
-    </div>
-    """
-    )
+    csv_path = os.path.splitext(output_file)[0] + "_matrix.csv"
+    pivot.fillna("").to_csv(csv_path)
 
     html = f"""
     <html>
@@ -122,7 +97,6 @@ def generate_pdf(
         <meta charset="utf-8">
         <style>
             @page {{ size: A4 portrait; margin: 1.5cm; }}
-            @page landscape {{ size: A4 landscape; margin: 1.5cm; }}
 
             body {{ font-family: Arial; font-size: 11px; }}
 
@@ -143,24 +117,7 @@ def generate_pdf(
                 text-align: center;
             }}
 
-            .general table {{
-                table-layout: fixed;
-            }}
-
-            .general td,
-            .general th {{
-                font-size: 7px;
-                padding: 3px 4px;
-                word-break: break-word;
-                overflow: hidden;
-            }}
-
             .page {{
-                page-break-before: always;
-            }}
-
-            .landscape {{
-                page: landscape;
                 page-break-before: always;
             }}
         </style>
@@ -175,3 +132,4 @@ def generate_pdf(
         pisa.CreatePDF(html, dest=f)
 
     print("PDF generated:", output_file)
+    print("Matrix CSV generated:", csv_path)
