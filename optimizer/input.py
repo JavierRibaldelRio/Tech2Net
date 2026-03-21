@@ -77,7 +77,7 @@ def load_matrix(
         rng.shuffle(speaker_cols)
         df_speakers = df_speakers[speaker_cols]
 
-    companies = df[company_cols].astype(str).agg("-".join, axis=1).tolist()
+    companies = df[company_cols].fillna("").astype(str).agg("-".join, axis=1).tolist()
     speakers = speaker_cols[:]
 
     matrix = {}
