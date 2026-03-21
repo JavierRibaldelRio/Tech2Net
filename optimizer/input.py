@@ -87,7 +87,6 @@ def load_matrix(
             val = df_speakers.iloc[c_idx, s_idx]
             if pd.notna(val) and val not in (0, "", False):
                 # print relation
-                print(f"Company '{c}' is interested in speaker '{s}'")
                 matrix.setdefault(s, []).append(c)
 
     return {"companies": companies, "speakers": speakers, "matrix": matrix}
