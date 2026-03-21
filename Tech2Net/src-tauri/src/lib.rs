@@ -6,7 +6,6 @@ use tauri_plugin_shell;
 use tauri_plugin_opener;
 
 use std::fs::File;
-use std::io::{BufRead, BufReader};
 
 
 // --- Lee las primeras N líneas de un CSV y las devuelve ---
@@ -14,17 +13,16 @@ use std::io::{BufRead, BufReader};
 #[tauri::command]
 fn read_csv_preview(path: String, rows: usize) -> Result<Vec<Vec<String>>, String> {
     let file = File::open(&path).map_err(|e| e.to_string())?;
-    let reader = BufReader::new(file);
+    let mut rdr = csv::ReaderBuilder::new()
+        .has_headers(false)
+        .flexible(true)
+        .from_reader(file);
 
-    let result: Vec<Vec<String>> = reader
-        .lines()
+    let result: Vec<Vec<String>> = rdr
+        .records()
         .take(rows)
-        .filter_map(|l| l.ok())
-        .map(|line| {
-            line.split(',')
-                .map(|cell| cell.trim().to_string())
-                .collect()
-        })
+        .filter_map(|r| r.ok())
+        .map(|record| record.iter().map(|cell| cell.trim().to_string()).collect())
         .collect();
 
     Ok(result)
