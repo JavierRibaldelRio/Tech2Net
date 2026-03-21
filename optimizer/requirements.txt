@@ -5,6 +5,7 @@ immutabledict==4.3.1
 numpy==2.4.3
 ortools==9.15.6755
 packaging==26.0
+openpyxl==3.1.5
 pandas==3.0.1
 protobuf==6.33.6
 pyinstaller==6.19.0

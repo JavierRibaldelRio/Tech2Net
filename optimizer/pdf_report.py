@@ -82,14 +82,14 @@ def generate_pdf(
         """
         )
 
-    # -------- SLOT x SPEAKER MATRIX (CSV) --------
+    # -------- SLOT x SPEAKER MATRIX (XLSX) --------
 
     pivot = display_df.pivot_table(
         index=time_title, columns=speaker_title, values=company_title, aggfunc="first"
     ).reindex(time_slots)
 
-    csv_path = os.path.splitext(output_file)[0] + "_matrix.csv"
-    pivot.fillna("").to_csv(csv_path)
+    xlsx_path = os.path.splitext(output_file)[0] + "_matrix.xlsx"
+    pivot.fillna("").to_excel(xlsx_path)
 
     html = f"""
     <html>
@@ -132,4 +132,4 @@ def generate_pdf(
         pisa.CreatePDF(html, dest=f)
 
     print("PDF generated:", output_file)
-    print("Matrix CSV generated:", csv_path)
+    print("Matrix XLSX generated:", xlsx_path)
