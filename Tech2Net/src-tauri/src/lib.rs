@@ -5,18 +5,20 @@ use tauri_plugin_dialog;
 use tauri_plugin_shell;
 use tauri_plugin_opener;
 
-use std::fs::File;
+use std::fs;
+use std::io::Cursor;
 
 
 // --- Lee las primeras N líneas de un CSV y las devuelve ---
 
 #[tauri::command]
 fn read_csv_preview(path: String, rows: usize) -> Result<Vec<Vec<String>>, String> {
-    let file = File::open(&path).map_err(|e| e.to_string())?;
+    let bytes = fs::read(&path).map_err(|e| e.to_string())?;
+    let content = String::from_utf8_lossy(&bytes).into_owned();
     let mut rdr = csv::ReaderBuilder::new()
         .has_headers(false)
         .flexible(true)
-        .from_reader(file);
+        .from_reader(Cursor::new(content.as_bytes()));
 
     let result: Vec<Vec<String>> = rdr
         .records()
