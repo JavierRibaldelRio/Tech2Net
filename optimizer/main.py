@@ -53,7 +53,7 @@ def main():
     schedule, stats = optimize(data, len(args.time_slots))
 
     print("Reuniones:", stats["meetings"])
-    print("speakers cubiertos:", stats["speakers_covered"])
+    print("Speakers cubiertos:", stats["speakers_covered"])
     print("Empresas cubiertas:", stats["companies_covered"])
     print("Optimal:", stats["optimal"])
 
