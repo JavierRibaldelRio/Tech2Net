@@ -11,7 +11,7 @@
 - **Time slot editor** — define as many slots as needed; live pill preview updates as you type
 - **Constraint optimisation** — Google OR-Tools CP-SAT solver maximises speaker coverage, then company coverage, then total meetings
 - **PDF report** — generates a structured report with global schedule, per-company and per-speaker breakdowns
-- **Cross-platform** — ships as native installers for Windows, macOS (Intel) and Linux
+- **Cross-platform** — ships as native installers for Windows, macOS (Intel and Apple Silicon) and Linux
 
 ---
 
@@ -52,7 +52,7 @@ npm install
 npm run tauri dev
 ```
 
-### 3 — Build a production installer
+### 2 — Build a production installer
 
 ```bash
 cd Tech2Net
@@ -65,12 +65,13 @@ Installers are written to `Tech2Net/src-tauri/target/release/bundle/`.
 
 ## CI/CD
 
-GitHub Actions builds the app for all three targets on every tagged release (`v*`):
+GitHub Actions builds the app for all four targets on every tagged release (`v*`):
 
 | Platform | Runner | Architecture |
 |----------|--------|--------------|
 | Linux | ubuntu-22.04 | x86_64 |
 | Windows | windows-latest | x86_64 |
+| macOS | macos-latest | Apple Silicon (aarch64) |
 | macOS | macos-13 | Intel (x86_64) |
 
 Each run builds the Tauri bundle and attaches the installers to a GitHub Release.
