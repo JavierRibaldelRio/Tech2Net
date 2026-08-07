@@ -49,6 +49,15 @@ function formatSize(bytes) {
   return ` (${mb.toFixed(1)} MB)`;
 }
 
+const OS_ICONS = {
+  windows:
+    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1 2.5 7 1.6V7.4H1zM8 1.5 15 .5V7.4H8zM1 8.4H7V14.3L1 13.4zM8 8.4H15V15.4L8 14.4z"/></svg>',
+  apple:
+    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M10 3.5c.3-.9 1.1-1.5 2-1.5-.1.9-.6 1.7-1.3 2.1.7.1 1.3.5 1.7 1.1-1.2.7-1.9 2-1.9 3.4 0 1.9 1.3 2.8 1.3 2.8s-.9 2.6-2.5 2.6c-.7 0-1-.4-1.9-.4s-1.2.4-1.9.4c-1.6 0-3-2.9-3-5.2 0-2.5 1.6-3.8 3.1-3.8.7 0 1.4.4 1.9.4.4 0 1.3-.5 2.2-.4-.4.1-.8.3-1.7 1.5z"/></svg>',
+  linux:
+    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><ellipse cx="8" cy="9.3" rx="4.3" ry="5.1"/><ellipse cx="8" cy="3.2" rx="2.2" ry="2.3"/><circle cx="7.1" cy="2.8" r="0.4" fill="#fff"/><circle cx="8.9" cy="2.8" r="0.4" fill="#fff"/><path d="M5.3 13.6 3.9 15.5h2.1zM10.7 13.6l1.4 1.9h-2.1z"/></svg>',
+};
+
 async function init() {
   const versionTag = document.getElementById("version-tag");
   const grid = document.getElementById("downloads-grid");
@@ -76,10 +85,10 @@ async function init() {
   const detected = detectOS();
 
   const columns = [
-    { key: "windows", label: "Windows", icon: "🪟" },
-    { key: "macArm", label: "macOS (Apple Silicon)", icon: "🍎" },
-    { key: "macIntel", label: "macOS (Intel)", icon: "🍎" },
-    { key: "linux", label: "Linux", icon: "🐧" },
+    { key: "windows", label: "Windows", icon: OS_ICONS.windows },
+    { key: "macArm", label: "macOS (Apple Silicon)", icon: OS_ICONS.apple },
+    { key: "macIntel", label: "macOS (Intel)", icon: OS_ICONS.apple },
+    { key: "linux", label: "Linux", icon: OS_ICONS.linux },
   ];
 
   grid.innerHTML = columns

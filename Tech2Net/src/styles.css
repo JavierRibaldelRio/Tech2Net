@@ -53,6 +53,12 @@ body {
   gap: 12px;
 }
 
+.app-logo {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
 h1 {
   font-size: 1.1rem;
   font-weight: 700;

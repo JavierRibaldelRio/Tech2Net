@@ -53,7 +53,13 @@ a {
 .app-title-group {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+}
+
+.app-logo {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
 }
 
 h1 {
@@ -92,6 +98,12 @@ h1 {
 .hero-inner {
   max-width: 720px;
   margin: 0 auto;
+}
+
+.hero-logo {
+  width: 72px;
+  height: 72px;
+  margin-bottom: 8px;
 }
 
 .hero-title {
@@ -180,6 +192,13 @@ h1 {
   font-weight: 400;
   color: #aaa;
   font-size: 0.73rem;
+}
+
+.hint-icon {
+  width: 12px;
+  height: 12px;
+  vertical-align: -1px;
+  flex-shrink: 0;
 }
 
 /* ---------- FEATURES ---------- */
@@ -271,7 +290,15 @@ h1 {
 }
 
 .download-card .os-icon {
-  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-card .os-icon svg {
+  width: 30px;
+  height: 30px;
+  color: #4b5563;
 }
 
 .download-card .alt-links {
@@ -318,8 +345,14 @@ h1 {
 }
 
 .btn-icon {
-  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
   opacity: 0.9;
+}
+
+.btn-icon svg {
+  width: 15px;
+  height: 15px;
 }
 
 /* ---------- FOOTER ---------- */
