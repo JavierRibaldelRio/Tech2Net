@@ -7,3 +7,5 @@ __pycache__
 *.pdf
 *.spec
 .venv
+
+website/release-data.json
