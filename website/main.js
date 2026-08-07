@@ -53,9 +53,9 @@ const OS_ICONS = {
   windows:
     '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1 2.5 7 1.6V7.4H1zM8 1.5 15 .5V7.4H8zM1 8.4H7V14.3L1 13.4zM8 8.4H15V15.4L8 14.4z"/></svg>',
   apple:
-    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M10 3.5c.3-.9 1.1-1.5 2-1.5-.1.9-.6 1.7-1.3 2.1.7.1 1.3.5 1.7 1.1-1.2.7-1.9 2-1.9 3.4 0 1.9 1.3 2.8 1.3 2.8s-.9 2.6-2.5 2.6c-.7 0-1-.4-1.9-.4s-1.2.4-1.9.4c-1.6 0-3-2.9-3-5.2 0-2.5 1.6-3.8 3.1-3.8.7 0 1.4.4 1.9.4.4 0 1.3-.5 2.2-.4-.4.1-.8.3-1.7 1.5z"/></svg>',
+    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="7.55" y="1.2" width="0.9" height="2.3" rx="0.45"/><ellipse cx="9.9" cy="2.3" rx="1.1" ry="0.65" transform="rotate(-25 9.9 2.3)"/><ellipse cx="5.9" cy="9.6" rx="3.3" ry="3.8"/><ellipse cx="9.6" cy="9.3" rx="3.5" ry="4.1"/></svg>',
   linux:
-    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><ellipse cx="8" cy="9.3" rx="4.3" ry="5.1"/><ellipse cx="8" cy="3.2" rx="2.2" ry="2.3"/><circle cx="7.1" cy="2.8" r="0.4" fill="#fff"/><circle cx="8.9" cy="2.8" r="0.4" fill="#fff"/><path d="M5.3 13.6 3.9 15.5h2.1zM10.7 13.6l1.4 1.9h-2.1z"/></svg>',
+    '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4l4 4-4 4"/><path d="M9 12h4"/></svg>',
 };
 
 async function init() {
