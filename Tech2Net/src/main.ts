@@ -13,6 +13,14 @@ const errorBanner  = document.getElementById("error-banner")!;
 const inputCompany = document.getElementById("company-cols") as HTMLInputElement;
 const inputSpeaker = document.getElementById("speaker-cols") as HTMLInputElement;
 
+const creditModalOverlay = document.getElementById("credit-modal-overlay")!;
+const creditModalClose   = document.getElementById("credit-modal-close")!;
+const btnCopyLink        = document.getElementById("btn-copy-link")!;
+const copyFeedback       = document.getElementById("copy-feedback")!;
+const mailtoShareLink    = document.getElementById("mailto-share-link") as HTMLAnchorElement;
+
+const REPO_URL = "https://github.com/JavierRibaldelRio/Tech2Net";
+
 function showError(msg: string) {
   errorBanner.textContent = msg;
   errorBanner.hidden = false;
@@ -155,6 +163,45 @@ document.getElementById("btn-file")!.addEventListener("click", async () => {
 
 });
 
+// -------- CREDIT MODAL --------
+
+function handleModalKeydown(e: KeyboardEvent) {
+  if (e.key === "Escape") closeCreditModal();
+}
+
+function openCreditModal() {
+  creditModalOverlay.hidden = false;
+  document.addEventListener("keydown", handleModalKeydown);
+}
+
+function closeCreditModal() {
+  creditModalOverlay.hidden = true;
+  document.removeEventListener("keydown", handleModalKeydown);
+}
+
+creditModalClose.addEventListener("click", closeCreditModal);
+
+creditModalOverlay.addEventListener("click", (e) => {
+  if (e.target === creditModalOverlay) closeCreditModal();
+});
+
+btnCopyLink.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(REPO_URL);
+    copyFeedback.hidden = false;
+    setTimeout(() => { copyFeedback.hidden = true; }, 2000);
+  } catch (err) {
+    log("Clipboard copy failed: " + String(err));
+  }
+});
+
+const mailSubject = encodeURIComponent("Check out Tech2Net");
+const mailBody = encodeURIComponent(
+  "Hi,\n\nI wanted to share Tech2Net, a tool for generating optimised meeting " +
+  "schedules from a CSV file:\n" + REPO_URL + "\n\nCheers!"
+);
+mailtoShareLink.href = "mailto:?subject=" + mailSubject + "&body=" + mailBody;
+
 // -------- RUN SCHEDULER --------
 
 document.getElementById("btn-run")!.addEventListener("click", async () => {
@@ -208,6 +255,10 @@ document.getElementById("btn-run")!.addEventListener("click", async () => {
     log("Finished with code " + result.code);
 
     await openPath(outputPdf);
+
+    if (Math.random() < 1 / 3) {
+      openCreditModal();
+    }
 
   } catch (err) {
 
