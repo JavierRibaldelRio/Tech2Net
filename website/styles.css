@@ -11,6 +11,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 a {
@@ -34,7 +35,6 @@ a {
   display: block;
   height: 3px;
   background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%);
-  margin: 0 -28px;
   position: absolute;
   top: 0;
   left: 0;
@@ -48,6 +48,8 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  row-gap: 8px;
 }
 
 .app-title-group {
@@ -73,6 +75,7 @@ h1 {
 .nav-links {
   display: flex;
   gap: 18px;
+  flex-wrap: wrap;
 }
 
 .nav-link {
