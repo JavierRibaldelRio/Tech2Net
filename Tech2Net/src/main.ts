@@ -8,16 +8,23 @@ let csvColumnCount = 0;
 
 const filePathDiv  = document.getElementById("file-path")!;
 const logsPre      = document.getElementById("logs")!;
+const techLogsPre  = document.getElementById("tech-logs")!;
 const colLegend    = document.getElementById("col-legend")!;
 const errorBanner  = document.getElementById("error-banner")!;
 const inputCompany = document.getElementById("company-cols") as HTMLInputElement;
 const inputSpeaker = document.getElementById("speaker-cols") as HTMLInputElement;
+
+const btnRun = document.getElementById("btn-run") as HTMLButtonElement;
 
 const creditModalOverlay = document.getElementById("credit-modal-overlay")!;
 const creditModalClose   = document.getElementById("credit-modal-close")!;
 const btnCopyLink        = document.getElementById("btn-copy-link")!;
 const copyFeedback       = document.getElementById("copy-feedback")!;
 const mailtoShareLink    = document.getElementById("mailto-share-link") as HTMLAnchorElement;
+
+const helpModalOverlay = document.getElementById("help-modal-overlay")!;
+const helpModalClose   = document.getElementById("help-modal-close")!;
+const helpBtn          = document.getElementById("help-btn")!;
 
 const REPO_URL = "https://github.com/JavierRibaldelRio/Tech2Net";
 
@@ -70,11 +77,55 @@ function validateInputs(): string | null {
   return null;
 }
 
-// -------- LOG FUNCTION --------
+// -------- LOG FUNCTIONS --------
 
 function log(msg: string) {
   logsPre.textContent += msg + "\n";
   logsPre.scrollTop = logsPre.scrollHeight;
+}
+
+function techLog(msg: string) {
+  techLogsPre.textContent += msg + "\n";
+  techLogsPre.scrollTop = techLogsPre.scrollHeight;
+}
+
+function logFriendlyStdout(stdout: string) {
+  for (const line of stdout.split("\n")) {
+    const trimmed = line.trim();
+    let m: RegExpMatchArray | null;
+
+    if ((m = trimmed.match(/^Reuniones:\s*(\d+)/))) {
+      log(`📅 Reuniones programadas: ${m[1]}`);
+    } else if ((m = trimmed.match(/^Speakers cubiertos:\s*(\d+)/))) {
+      log(`🎤 Ponentes con al menos una reunión: ${m[1]}`);
+    } else if ((m = trimmed.match(/^Empresas cubiertas:\s*(\d+)/))) {
+      log(`🏢 Empresas con al menos una reunión: ${m[1]}`);
+    } else if (/^Optimal:\s*True/.test(trimmed)) {
+      log("✅ Se ha encontrado la mejor combinación posible.");
+    } else if (/^Optimal:\s*False/.test(trimmed)) {
+      log("⚠️ No se pudo confirmar que sea la combinación óptima en el tiempo disponible, pero el horario generado es válido.");
+    } else if (/^PDF generated:/.test(trimmed)) {
+      log("📄 PDF generado correctamente.");
+    }
+  }
+}
+
+// -------- BUTTON LOADING STATE --------
+
+async function withButtonLoading<T>(
+  btn: HTMLButtonElement,
+  loadingHtml: string,
+  fn: () => Promise<T>
+): Promise<T> {
+  const originalHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = loadingHtml;
+  try {
+    return await fn();
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
 }
 
 // -------- COLUMN HIGHLIGHT --------
@@ -163,27 +214,34 @@ document.getElementById("btn-file")!.addEventListener("click", async () => {
 
 });
 
+// -------- MODAL FACTORY --------
+
+function setupModal(overlay: HTMLElement, closeBtn: HTMLElement) {
+  function handleKeydown(e: KeyboardEvent) {
+    if (e.key === "Escape") close();
+  }
+
+  function open() {
+    overlay.hidden = false;
+    document.addEventListener("keydown", handleKeydown);
+  }
+
+  function close() {
+    overlay.hidden = true;
+    document.removeEventListener("keydown", handleKeydown);
+  }
+
+  closeBtn.addEventListener("click", close);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) close();
+  });
+
+  return { open, close };
+}
+
 // -------- CREDIT MODAL --------
 
-function handleModalKeydown(e: KeyboardEvent) {
-  if (e.key === "Escape") closeCreditModal();
-}
-
-function openCreditModal() {
-  creditModalOverlay.hidden = false;
-  document.addEventListener("keydown", handleModalKeydown);
-}
-
-function closeCreditModal() {
-  creditModalOverlay.hidden = true;
-  document.removeEventListener("keydown", handleModalKeydown);
-}
-
-creditModalClose.addEventListener("click", closeCreditModal);
-
-creditModalOverlay.addEventListener("click", (e) => {
-  if (e.target === creditModalOverlay) closeCreditModal();
-});
+const creditModal = setupModal(creditModalOverlay, creditModalClose);
 
 btnCopyLink.addEventListener("click", async () => {
   try {
@@ -191,20 +249,25 @@ btnCopyLink.addEventListener("click", async () => {
     copyFeedback.hidden = false;
     setTimeout(() => { copyFeedback.hidden = true; }, 2000);
   } catch (err) {
-    log("Clipboard copy failed: " + String(err));
+    techLog("No se pudo copiar el enlace: " + String(err));
   }
 });
 
-const mailSubject = encodeURIComponent("Check out Tech2Net");
+const mailSubject = encodeURIComponent("Descubre Tech2Net");
 const mailBody = encodeURIComponent(
-  "Hi,\n\nI wanted to share Tech2Net, a tool for generating optimised meeting " +
-  "schedules from a CSV file:\n" + REPO_URL + "\n\nCheers!"
+  "Hola,\n\nQuería compartirte Tech2Net, una herramienta para generar horarios de " +
+  "reuniones optimizados a partir de un fichero CSV:\n" + REPO_URL + "\n\n¡Un saludo!"
 );
 mailtoShareLink.href = "mailto:?subject=" + mailSubject + "&body=" + mailBody;
 
+// -------- HELP MODAL --------
+
+const helpModal = setupModal(helpModalOverlay, helpModalClose);
+helpBtn.addEventListener("click", helpModal.open);
+
 // -------- RUN SCHEDULER --------
 
-document.getElementById("btn-run")!.addEventListener("click", async () => {
+btnRun.addEventListener("click", async () => {
 
   clearError();
 
@@ -215,56 +278,71 @@ document.getElementById("btn-run")!.addEventListener("click", async () => {
   }
 
   logsPre.textContent = "";
-  log("Starting scheduler...");
+  techLogsPre.textContent = "";
 
-  try {
+  await withButtonLoading(btnRun, `<span class="btn-icon">⏳</span> Generando…`, async () => {
 
-    const file = selectedFile!;
+    log("⏳ Generando el horario… esto puede tardar hasta un minuto.");
 
-    const outputPdf = await save({
-      filters: [{ name: "PDF", extensions: ["pdf"] }],
-      defaultPath: file.replace(/\.[^.]+$/, ".pdf"),
-    });
+    try {
 
-    if (!outputPdf) {
-      log("Cancelled.");
-      return;
+      const file = selectedFile!;
+
+      const outputPdf = await save({
+        filters: [{ name: "PDF", extensions: ["pdf"] }],
+        defaultPath: file.replace(/\.[^.]+$/, ".pdf"),
+      });
+
+      if (!outputPdf) {
+        log("Operación cancelada.");
+        return;
+      }
+
+      const companyCols = parseColInput(inputCompany.value).map(String);
+      const speakerCols = parseColInput(inputSpeaker.value).map(String);
+      const timeSlots = (document.getElementById("slots") as HTMLTextAreaElement).value.trim().split(/\n/).map(s => s.trim()).filter(s => s.length > 0);
+
+      const args = [
+        file,
+        "--output", outputPdf,
+        "--company-cols", ...companyCols,
+        "--speaker-cols", ...speakerCols,
+        "--time-slots", ...timeSlots,
+      ];
+
+      techLog("CMD: bin/scheduler " + args.join(" "));
+
+      const cmd = Command.sidecar("bin/scheduler", args);
+
+      const result = await cmd.execute();
+
+      if (result.stdout) {
+        techLog(result.stdout);
+        logFriendlyStdout(result.stdout);
+      }
+      if (result.stderr) {
+        techLog("ERR: " + result.stderr);
+        log("⚠️ Se han detectado avisos técnicos. Revisa los detalles técnicos si el resultado no es el esperado.");
+      }
+
+      techLog("Finished with code " + result.code);
+
+      log("✅ ¡Horario generado con éxito! Abriendo el PDF…");
+
+      await openPath(outputPdf);
+
+      if (Math.random() < 1 / 3) {
+        creditModal.open();
+      }
+
+    } catch (err) {
+
+      log("❌ Ha ocurrido un error al generar el horario. Revisa los datos e inténtalo de nuevo.");
+      techLog("Execution failed:");
+      techLog(String(err));
+
     }
 
-    const companyCols = parseColInput(inputCompany.value).map(String);
-    const speakerCols = parseColInput(inputSpeaker.value).map(String);
-    const timeSlots = (document.getElementById("slots") as HTMLTextAreaElement).value.trim().split(/\n/).map(s => s.trim()).filter(s => s.length > 0);
-
-    const args = [
-      file,
-      "--output", outputPdf,
-      "--company-cols", ...companyCols,
-      "--speaker-cols", ...speakerCols,
-      "--time-slots", ...timeSlots,
-    ];
-
-    log("CMD: bin/scheduler " + args.join(" "));
-
-    const cmd = Command.sidecar("bin/scheduler", args);
-
-    const result = await cmd.execute();
-
-    if (result.stdout) log(result.stdout);
-    if (result.stderr) log("ERR: " + result.stderr);
-
-    log("Finished with code " + result.code);
-
-    await openPath(outputPdf);
-
-    if (Math.random() < 1 / 3) {
-      openCreditModal();
-    }
-
-  } catch (err) {
-
-    log("Execution failed:");
-    log(String(err));
-
-  }
+  });
 
 });

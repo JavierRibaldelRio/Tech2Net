@@ -42,6 +42,9 @@ body {
   max-width: 860px;
   margin: 0 auto;
   padding: 14px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .app-title-group {
@@ -535,6 +538,27 @@ pre::-webkit-scrollbar-thumb {
   border-radius: 3px;
 }
 
+.tech-details {
+  border-top: 1px solid #333;
+}
+
+.tech-details summary {
+  padding: 8px 18px;
+  font-size: 0.72rem;
+  color: #888;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tech-details summary:hover {
+  color: #a8b8c8;
+}
+
+.tech-details pre {
+  height: auto;
+  max-height: 220px;
+}
+
 /* ---------- FOOTER ---------- */
 
 .app-footer {
@@ -602,7 +626,7 @@ pre::-webkit-scrollbar-thumb {
   flex-shrink: 0;
 }
 
-/* ---------- CREDIT MODAL ---------- */
+/* ---------- MODALS ---------- */
 
 .modal-overlay {
   position: fixed;
@@ -631,10 +655,7 @@ pre::-webkit-scrollbar-thumb {
   position: relative;
 }
 
-.modal-close-btn {
-  position: absolute;
-  top: 14px;
-  right: 14px;
+.icon-btn {
   width: 26px;
   height: 26px;
   padding: 0;
@@ -650,10 +671,16 @@ pre::-webkit-scrollbar-thumb {
   cursor: pointer;
 }
 
-.modal-close-btn:hover {
+.icon-btn:hover {
   background: #f3f4f6;
   color: #111;
   border-color: #d1d5db;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
 }
 
 .modal-header {
@@ -688,6 +715,18 @@ pre::-webkit-scrollbar-thumb {
   height: 1px;
   background: #f0f0f0;
   margin: 0 0 18px;
+}
+
+.help-steps {
+  margin: 0 0 18px;
+  padding-left: 20px;
+  font-size: 0.85rem;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.help-steps li {
+  margin-bottom: 6px;
 }
 
 .modal-share-actions {
